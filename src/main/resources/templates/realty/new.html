@@ -9,13 +9,21 @@
 <div id="realty_new" layout:fragment="content">
     <div class="container">
         <div class="col-md-4">
-            <input type="text" name="address" placeholder="위치" class="address form-control">
+            <input type="text" placeholder="위치" class="input-address form-control">
             <button type="submit" class="search-address btn btn-success">검색</button>
         </div>
 
         <div id="map" style="width:500px;height:500px;"></div>
 
         <div class="col-md-4">
+            <form>
+                위도 <input type="text" name="lat" th:readonly="readonly" class="input-lat form-control">
+                경도 <input type="text" name="lng" th:readonly="readonly" class="input-lng form-control">
+                물건이름 <input type="text" name="realty_name" class="input-realty-name form-control">
+                주소 <input type="text" name="address1" class="input-address1 form-control">
+                <button type="button" class="copy-address btn btn-success">복사</button>
+                상세내용 <textarea name="realty-content" class="input-realty-content form-control"></textarea>
+            </form>
         </div>
     </div>
 </div>
@@ -56,7 +64,7 @@
 
         // 검색 버튼 클릭
         $('.search-address').on('click', function () {
-            var address = $('.address').val();
+            var address = $('.input-address').val();
 
             // 주소로 좌표를 검색합니다
             geocoder.addressSearch(address, function (result, status) {
@@ -64,7 +72,10 @@
                 // 정상적으로 검색이 완료됐으면
                 if (status === daum.maps.services.Status.OK) {
 
-                    var coords = new daum.maps.LatLng(result[0].y, result[0].x);
+                    var lat = result[0].y;
+                    var lng = result[0].x;
+
+                    var coords = new daum.maps.LatLng(lat, lng);
 
                     // 결과값으로 받은 위치를 마커로 표시합니다
                     marker.setPosition(coords);
@@ -79,11 +90,24 @@
                     // });
                     // infowindow.open(map, marker);
 
+                    $('.input-lat').val(lat);
+                    $('.input-lng').val(lng);
+
                     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                     map.setCenter(coords);
+                } else {
+                    $('.input-lat').val('');
+                    $('.input-lng').val('');
+
+                    alert('주소 검색에 실패하였습니다.');
                 }
 
             });
+        });
+
+        // 주소 복사
+        $('.copy-address').on('click', function() {
+           $('.input-address1').val($('.input-address').val());
         });
 
         // // 주소로 좌표를 검색합니다
@@ -119,10 +143,16 @@
             // 드래그한 위도, 경도 정보를 가져옵니다
             var latlng = marker.getPosition();
 
-            var message = '드래그한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-            message += '경도는 ' + latlng.getLng() + ' 입니다';
+            var lat = latlng.getLat();
+            var lng = latlng.getLng();
+
+            var message = '드래그한 위치의 위도는 ' + lat + ' 이고, ';
+            message += '경도는 ' + lng + ' 입니다';
 
             console.info(message);
+
+            $('.input-lat').val(lat);
+            $('.input-lng').val(lng);
 
         });
 
@@ -136,10 +166,16 @@
             // 마커 위치를 클릭한 위치로 옮깁니다
             marker.setPosition(latlng);
 
-            var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-            message += '경도는 ' + latlng.getLng() + ' 입니다';
+            var lat = latlng.getLat();
+            var lng = latlng.getLng();
+
+            var message = '클릭한 위치의 위도는 ' + lat + ' 이고, ';
+            message += '경도는 ' + lng + ' 입니다';
 
             console.info(message);
+
+            $('.input-lat').val(lat);
+            $('.input-lng').val(lng);
 
         });
 
