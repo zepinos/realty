@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
+    <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=898ef3f58fbd61e694f90c5384670dc7&libraries=clusterer,services,drawing"></script>
 </head>
@@ -9,20 +10,35 @@
 <div id="realty_new" layout:fragment="content">
     <div class="container">
         <div class="col-md-4">
-            <input type="text" placeholder="위치" class="input-address form-control">
-            <button type="submit" class="search-address btn btn-success">검색</button>
+            <button class="search-address btn btn-success">주소검색</button>
         </div>
 
-        <div id="map" style="width:500px;height:500px;"></div>
+        <div id="map" style="width:500px;height:500px;margin-top:10px;display:none"></div>
 
         <div class="col-md-4">
-            <form>
-                위도 <input type="text" name="lat" th:readonly="readonly" class="input-lat form-control">
-                경도 <input type="text" name="lng" th:readonly="readonly" class="input-lng form-control">
-                물건이름 <input type="text" name="realty_name" class="input-realty-name form-control">
-                주소 <input type="text" name="address1" class="input-address1 form-control">
-                <button type="button" class="copy-address btn btn-success">복사</button>
-                상세내용 <textarea name="realty-content" class="input-realty-content form-control"></textarea>
+            <form method="post" class="form-realty">
+                <div>
+                    위도 <input type="text" name="lat" th:readonly="readonly" class="input-lat form-control">
+                    경도 <input type="text" name="lng" th:readonly="readonly" class="input-lng form-control">
+                </div>
+                <div>
+                    우편번호 <input type="text" name="zonecode" th:readonly="readonly" class="input-zonecode form-control">
+                    주소 <input type="text" name="address" th:readonly="readonly" class="input-address form-control">
+                    상세주소 <input type="text" name="detailAddress" class="input-detail-address form-control">
+                    참고항목 <input type="text" name="extraAddress" th:readonly="readonly" class="input-extra-address form-control">
+                    시도 <input type="text" name="sido" th:readonly="readonly" class="input-sido form-control">
+                    시군구 <input type="text" name="sigungu" th:readonly="readonly" class="input-sigungu form-control">
+                    법정동 <input type="text" name="bname" th:readonly="readonly" class="input-bname form-control">
+                    행정동 <input type="text" name="hname" th:readonly="readonly" class="input-hname form-control">
+                </div>
+                <div>
+                    물건이름 <input type="text" name="realtyName" class="input-realty-name form-control">
+                    상세내용 <textarea name="realtyContent" class="input-realty-content form-control"></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="button-submit form-controll">저장</button>
+                </div>
+
             </form>
         </div>
     </div>
@@ -37,7 +53,7 @@
     <script type="text/javascript">
         var container = document.getElementById('map');
         var options = {
-            center: new daum.maps.LatLng(33.450701, 126.570667),
+            center: new daum.maps.LatLng(37.48683046398042, 126.8915661110265),
             level: 3
         };
 
@@ -64,50 +80,96 @@
 
         // 검색 버튼 클릭
         $('.search-address').on('click', function () {
-            var address = $('.input-address').val();
 
-            // 주소로 좌표를 검색합니다
-            geocoder.addressSearch(address, function (result, status) {
+            // 주소 검색창
+            new daum.Postcode({
 
-                // 정상적으로 검색이 완료됐으면
-                if (status === daum.maps.services.Status.OK) {
+                oncomplete: function (data) {
 
-                    var lat = result[0].y;
-                    var lng = result[0].x;
+                    var addr = data.address; // 최종 주소 변수
 
-                    var coords = new daum.maps.LatLng(lat, lng);
+                    // 주소로 좌표를 검색합니다
+                    geocoder.addressSearch(addr, function (result, status) {
 
-                    // 결과값으로 받은 위치를 마커로 표시합니다
-                    marker.setPosition(coords);
-                    // marker = new daum.maps.Marker({
-                    //     map: map,
-                    //     position: coords
-                    // });
+                        // 정상적으로 검색이 완료됐으면
+                        if (status === daum.maps.services.Status.OK) {
 
-                    // // 인포윈도우로 장소에 대한 설명을 표시합니다
-                    // var infowindow = new daum.maps.InfoWindow({
-                    //     content: '<div style="width:150px;text-align:center;padding:6px 0;">테스트 위치</div>'
-                    // });
-                    // infowindow.open(map, marker);
+                            var lat = result[0].y;
+                            var lng = result[0].x;
 
-                    $('.input-lat').val(lat);
-                    $('.input-lng').val(lng);
+                            var coords = new daum.maps.LatLng(lat, lng);
 
-                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                    map.setCenter(coords);
-                } else {
-                    $('.input-lat').val('');
-                    $('.input-lng').val('');
+                            container.style.display = "block";
+                            map.relayout();
 
-                    alert('주소 검색에 실패하였습니다.');
+                            // 좌표 정보 입력
+                            $('.input-lat').val(lat);
+                            $('.input-lng').val(lng);
+
+                            // 주소 정보 입력
+                            var address = '';
+                            var extraAddr = '';
+
+                            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                            if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                                address = data.roadAddress;
+                            } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                                address = data.jibunAddress;
+                            }
+
+                            // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                            if (data.userSelectedType === 'R') {
+                                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                                if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                                    extraAddr += data.bname;
+                                }
+                                // 건물명이 있고, 공동주택일 경우 추가한다.
+                                if (data.buildingName !== '' && data.apartment === 'Y') {
+                                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                                }
+                                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                                if (extraAddr !== '') {
+                                    extraAddr = ' (' + extraAddr + ')';
+                                }
+
+                            }
+
+                            $('.input-zonecode').val(data.zonecode);
+                            $('.input-address').val(address);
+                            $('.input-extra-address').val(extraAddr);
+                            $('.input-sido').val(data.sido);
+                            $('.input-sigungu').val(data.sigungu);
+                            $('.input-bname').val(data.bname);
+                            $('.input-hname').val(data.hname);
+
+                            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                            map.setCenter(coords);
+
+                            // 결과값으로 받은 위치를 마커로 표시합니다
+                            marker.setPosition(coords);
+
+                            $('.input-detail-address').focus();
+
+                        } else {
+
+                            $('.input-lat').val('');
+                            $('.input-lng').val('');
+
+                            alert('주소 검색에 실패하였습니다.');
+
+                        }
+
+                    });
+
                 }
+            }).open();
 
-            });
         });
 
         // 주소 복사
-        $('.copy-address').on('click', function() {
-           $('.input-address1').val($('.input-address').val());
+        $('.copy-address').on('click', function () {
+            $('.input-address1').val($('.input-address').val());
         });
 
         // // 주소로 좌표를 검색합니다
@@ -195,6 +257,23 @@
             message += '북동쪽 위도, 경도는  ' + neLatlng.toString() + '입니다 </p>';
 
             console.info(message);
+
+        });
+
+        $('.form-realty').submit(function () {
+
+            event.preventDefault();
+
+            $.ajax({
+                type: 'post',
+                url: '/realty',
+                data: $(this).serialize(),
+                success: function (data, status, xhr) {
+                    alert("입력되었습니다.");
+                    // location.href = "/realty";
+                }
+
+            });
 
         });
 
