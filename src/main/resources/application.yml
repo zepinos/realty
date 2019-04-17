@@ -6,3 +6,6 @@ spring:
     url: jdbc:mysql://dev.zepinos.com:3306/realty?characterEncoding=UTF-8&serverTimezone=UTC
     username: realty
     password: realty123$
+logging:
+  level:
+    org.jooq: debug

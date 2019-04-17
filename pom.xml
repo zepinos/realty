@@ -138,7 +138,7 @@
                         <generate>
                             <javaTimeTypes>true</javaTimeTypes>
                             <pojos>true</pojos>
-                            <daos>true</daos>
+<!--                            <daos>true</daos>-->
                         </generate>
                         <target>
                             <packageName>com.zepinos.realty.jooq</packageName>

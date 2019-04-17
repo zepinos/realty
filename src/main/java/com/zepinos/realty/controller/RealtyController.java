@@ -1,18 +1,24 @@
 package com.zepinos.realty.controller;
 
 import com.zepinos.realty.jooq.tables.pojos.RealtyList;
+import com.zepinos.realty.service.RealtyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Slf4j
 @Controller
 @RequestMapping("/realty")
 public class RealtyController {
+
+    private final RealtyService realtyService;
+
+    public RealtyController(RealtyService realtyService) {
+        this.realtyService = realtyService;
+    }
 
     @GetMapping("/new")
     public String newRealty() {
@@ -21,14 +27,24 @@ public class RealtyController {
 
     @PostMapping("")
     @ResponseBody
-    public Map<String, Object> post(@ModelAttribute RealtyList realtyList) {
+    public Callable<Map<String, Object>> post(@ModelAttribute RealtyList realtyList) {
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("status", 0);
+        return () -> {
 
-        log.info("realtyList : {}", realtyList);
+            Map<String, Object> result = null;
+            try {
 
-        return result;
+                result = realtyService.post(realtyList);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
 
     }
 
