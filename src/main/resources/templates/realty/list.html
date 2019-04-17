@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+</head>
+
+<div id="realty_new" layout:fragment="content">
+    <div class="container">
+        <div class="col-md-4">
+            <table border="1">
+                <tr>
+                    <th>물건이름</th>
+                    <th>법정동</th>
+                    <th>주소</th>
+                </tr>
+                <tr th:each="list : ${list}">
+                    <td><a th:href="|/realty/${list.realtySeq}/|" th:text="${list.realtyName}" /></td>
+                    <td th:text="${list.bname}"></td>
+                    <td th:text="${list.address}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+</html>

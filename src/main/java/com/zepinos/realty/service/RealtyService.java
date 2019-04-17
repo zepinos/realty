@@ -6,6 +6,7 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static com.zepinos.realty.jooq.tables.RealtyList.REALTY_LIST;
@@ -17,6 +18,30 @@ public class RealtyService {
 
     public RealtyService(DSLContext dsl) {
         this.dsl = dsl;
+    }
+
+    public List<RealtyList> list() throws Exception {
+
+        // realty_list 테이블 조회
+        List<RealtyList> realtyList =
+                dsl.selectFrom(REALTY_LIST)
+                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                        .fetchInto(RealtyList.class);
+
+        return realtyList;
+
+    }
+
+    public RealtyList get(long realtySeq) throws Exception {
+
+        // realty_list 테이블 조회
+        RealtyList realtyList =
+                dsl.selectFrom(REALTY_LIST)
+                        .where(REALTY_LIST.REALTY_SEQ.eq(realtySeq))
+                        .fetchOneInto(RealtyList.class);
+
+        return realtyList;
+
     }
 
     public Map<String, Object> post(RealtyList realtyList) throws Exception {
@@ -31,6 +56,5 @@ public class RealtyService {
         return Map.of("status", 0, "count", cnt);
 
     }
-
 
 }
