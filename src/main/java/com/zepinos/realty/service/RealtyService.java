@@ -57,4 +57,25 @@ public class RealtyService {
 
     }
 
+    public Map<String, Object> ajaxReadRealty(long realtySeq,
+                                              double swLat, double swLng, double neLat, double neLng) throws Exception {
+
+        // 주변 물건 조회
+        List<RealtyList> realtyList =
+                dsl.select(REALTY_LIST.REALTY_SEQ,
+                        REALTY_LIST.REALTY_NAME,
+                        REALTY_LIST.LAT,
+                        REALTY_LIST.LNG)
+                        .from(REALTY_LIST)
+                        .where(REALTY_LIST.REALTY_SEQ.ne(realtySeq)
+                                .and(REALTY_LIST.LAT.between(swLat, neLat))
+                                .and(REALTY_LIST.LNG.between(swLng, neLng))
+                        )
+                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                        .fetchInto(RealtyList.class);
+
+        return Map.of("status", 0, "list", realtyList);
+
+    }
+
 }

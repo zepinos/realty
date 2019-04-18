@@ -91,4 +91,31 @@ public class RealtyController {
 
     }
 
+    @PostMapping("/ajax/readRealty/")
+    @ResponseBody
+    public Callable<Map<String, Object>> ajaxReadRealty(@RequestParam long realtySeq,
+                                                        @RequestParam double swLat,
+                                                        @RequestParam double swLng,
+                                                        @RequestParam double neLat,
+                                                        @RequestParam double neLng) {
+
+        return () -> {
+
+            Map<String, Object> result = null;
+            try {
+
+                result = realtyService.ajaxReadRealty(realtySeq, swLat, swLng, neLat, neLng);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
 }
