@@ -27,7 +27,7 @@ public class RealtyController {
         return "realty/new";
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public String list(ModelMap modelMap) {
 
         List<RealtyList> list = null;
@@ -47,7 +47,7 @@ public class RealtyController {
 
     }
 
-    @GetMapping("/{realtySeq}/")
+    @GetMapping("/{realtySeq}")
     public String get(ModelMap modelMap,
                       @PathVariable long realtySeq) {
 
@@ -68,7 +68,7 @@ public class RealtyController {
 
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     @ResponseBody
     public Callable<Map<String, Object>> post(@ModelAttribute RealtyList realtyList) {
 
@@ -91,7 +91,30 @@ public class RealtyController {
 
     }
 
-    @PostMapping("/ajax/readRealty/")
+    @DeleteMapping("/{realtySeq}")
+    @ResponseBody
+    public Callable<Map<String, Object>> delete(@PathVariable long realtySeq) {
+
+        return () -> {
+
+            Map<String, Object> result = null;
+            try {
+
+                result = realtyService.delete(realtySeq);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
+    @PostMapping("/ajax/readRealty")
     @ResponseBody
     public Callable<Map<String, Object>> ajaxReadRealty(@RequestParam long realtySeq,
                                                         @RequestParam double swLat,

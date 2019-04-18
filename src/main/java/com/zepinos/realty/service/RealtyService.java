@@ -57,6 +57,17 @@ public class RealtyService {
 
     }
 
+    public Map<String, Object> delete(long realtySeq) throws Exception {
+
+        // realty_list 테이블 저장
+        int cnt = dsl.deleteFrom(REALTY_LIST)
+                .where(REALTY_LIST.REALTY_SEQ.eq(realtySeq))
+                .execute();
+
+        return Map.of("status", 0, "count", cnt);
+
+    }
+
     public Map<String, Object> ajaxReadRealty(long realtySeq,
                                               double swLat, double swLng, double neLat, double neLng) throws Exception {
 

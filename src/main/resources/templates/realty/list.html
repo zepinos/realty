@@ -14,7 +14,7 @@
                     <th>주소</th>
                 </tr>
                 <tr th:each="list : ${list}">
-                    <td><a th:href="|/realty/${list.realtySeq}/|" th:text="${list.realtyName}" /></td>
+                    <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}" /></td>
                     <td th:text="${list.bname}"></td>
                     <td th:text="${list.address}"></td>
                 </tr>

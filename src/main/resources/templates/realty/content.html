@@ -39,8 +39,8 @@
                 <p name="zonecode" class="form-control" th:text="${content.realtyContent}">
             </div>
             <div>
-                <button type="button" class="button-edit form-controll">수정</button>
-                <button type="button" class="button-del form-controll">삭제</button>
+                <button type="button" class="button-edit form-control">수정</button>
+                <button type="button" class="button-del form-control">삭제</button>
             </div>
 
         </div>
@@ -106,6 +106,20 @@
 
         });
 
+        $(".button-del").on('click', function () {
+
+            $.ajax({
+                type: 'delete',
+                url: '/realty/[[${content.realtySeq}]]',
+                success: function (data, status, xhr) {
+                    alert("삭제되었습니다.");
+                    location.href = "/realty";
+                }
+
+            });
+
+        });
+
         function readRealty() {
 
             // 지도 영역정보를 얻어옵니다
@@ -161,7 +175,7 @@
                         // 인포윈도우가 지도 위에 표시되도록 설정합니다.
                         var infowindow_near = new daum.maps.InfoWindow({
                             content: '<div style="padding:6px 0;"><a href="/realty/' + value.realtySeq + '/">' + value.realtyName + '</a></div>',
-                            removable : true
+                            removable: true
                         });
 
                         infowindow_list.push(infowindow_near);
@@ -169,7 +183,7 @@
                         infowindow_near.open(map, marker_near);
 
                         // 마커에 클릭이벤트를 등록합니다
-                        daum.maps.event.addListener(marker_near, 'click', function() {
+                        daum.maps.event.addListener(marker_near, 'click', function () {
                             // 마커 위에 인포윈도우를 표시합니다
                             infowindow_near.open(map, marker_near);
                         });
