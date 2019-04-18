@@ -14,21 +14,29 @@
         <div class="col-md-4">
             <div>
                 위도 <p name="zonecode" class="form-control" th:text="${content.lat}">
-                경도 <p name="zonecode" class="form-control" th:text="${content.lng}">
+                경도
+                <p name="zonecode" class="form-control" th:text="${content.lng}">
             </div>
             <div>
-                우편번호 <p name="zonecode" class="form-control" th:text="${content.zonecode}" />
+                우편번호 <p name="zonecode" class="form-control" th:text="${content.zonecode}"/>
                 주소 <p name="zonecode" class="form-control" th:text="${content.address}">
-                상세주소 <p name="zonecode" class="form-control" th:text="${content.detailAddress}">
-                참고항목 <p name="zonecode" class="form-control" th:text="${content.extraAddress}">
-                시도 <p name="zonecode" class="form-control" th:text="${content.sido}">
-                시군구 <p name="zonecode" class="form-control" th:text="${content.sigungu}">
-                법정동 <p name="zonecode" class="form-control" th:text="${content.bname}">
-                행정동 <p name="zonecode" class="form-control" th:text="${content.hname}">
+                상세주소
+                <p name="zonecode" class="form-control" th:text="${content.detailAddress}">
+                    참고항목
+                <p name="zonecode" class="form-control" th:text="${content.extraAddress}">
+                    시도
+                <p name="zonecode" class="form-control" th:text="${content.sido}">
+                    시군구
+                <p name="zonecode" class="form-control" th:text="${content.sigungu}">
+                    법정동
+                <p name="zonecode" class="form-control" th:text="${content.bname}">
+                    행정동
+                <p name="zonecode" class="form-control" th:text="${content.hname}">
             </div>
             <div>
                 물건이름 <p name="zonecode" class="form-control" th:text="${content.realtyName}">
-                상세내용 <p name="zonecode" class="form-control" th:text="${content.realtyContent}">
+                상세내용
+                <p name="zonecode" class="form-control" th:text="${content.realtyContent}">
             </div>
             <div>
                 <button type="button" class="button-edit form-controll">수정</button>
@@ -97,7 +105,7 @@
             console.info(message);
 
         });
-var i = 0;
+
         function readRealty() {
 
             // 지도 영역정보를 얻어옵니다
@@ -152,12 +160,19 @@ var i = 0;
 
                         // 인포윈도우가 지도 위에 표시되도록 설정합니다.
                         var infowindow_near = new daum.maps.InfoWindow({
-                            content: '<div style="padding:6px 0;">' + value.realtyName + '</div>'
+                            content: '<div style="padding:6px 0;"><a href="/realty/' + value.realtySeq + '/">' + value.realtyName + '</a></div>',
+                            removable : true
                         });
 
                         infowindow_list.push(infowindow_near);
 
                         infowindow_near.open(map, marker_near);
+
+                        // 마커에 클릭이벤트를 등록합니다
+                        daum.maps.event.addListener(marker_near, 'click', function() {
+                            // 마커 위에 인포윈도우를 표시합니다
+                            infowindow_near.open(map, marker_near);
+                        });
 
                     });
 
