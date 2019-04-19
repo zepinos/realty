@@ -33,7 +33,7 @@
                     </tfoot>
                     <tbody>
                     <tr th:each="list : ${list}">
-                        <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}" /></td>
+                        <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}"/></td>
                         <td th:text="${list.bname}"></td>
                         <td th:text="${list.address}"></td>
                     </tr>
@@ -43,5 +43,16 @@
         </div>
     </div>
 </div>
+
+<th:block layout:fragment="script">
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script type="text/javascript">
+        $('#dataTable').DataTable();
+    </script>
+</th:block>
 
 </html>
