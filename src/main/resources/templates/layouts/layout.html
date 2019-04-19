@@ -22,6 +22,31 @@
 
     <ul th:replace="layouts/sidebar :: sidebarFragment"></ul>
 
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav th:replace="layouts/topbar :: topbarFragment"></nav>
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div layout:fragment="content">
+                <p>This is default main content with default layout</p>
+            </div>
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer th:replace="layouts/footer :: footerFragment"></footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
 </div>
 <!-- End of Page Wrapper -->
 
@@ -37,15 +62,6 @@
 <!-- Custom scripts for all pages-->
 <script src="js/sb-admin-2.min.js"></script>
 
-
-
-
-
-
-
-<div layout:fragment="content">
-    <p>This is default main content with default layout</p>
-</div>
 <th:block layout:fragment="script"></th:block>
 
 </html>

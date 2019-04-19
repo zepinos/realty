@@ -4,21 +4,42 @@
 <head>
 </head>
 
-<div id="realty_new" layout:fragment="content">
-    <div class="container">
-        <div class="col-md-4">
-            <table border="1">
-                <tr>
-                    <th>물건이름</th>
-                    <th>법정동</th>
-                    <th>주소</th>
-                </tr>
-                <tr th:each="list : ${list}">
-                    <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}" /></td>
-                    <td th:text="${list.bname}"></td>
-                    <td th:text="${list.address}"></td>
-                </tr>
-            </table>
+<div class="container-fluid" layout:fragment="content">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">물건 목록</h1>
+    <p class="mb-4">물건 목록을 조회할 수 있습니다.</p>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>물건 이름</th>
+                        <th>법정동</th>
+                        <th>주소</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>물건 이름</th>
+                        <th>법정동</th>
+                        <th>주소</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    <tr th:each="list : ${list}">
+                        <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}" /></td>
+                        <td th:text="${list.bname}"></td>
+                        <td th:text="${list.address}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
