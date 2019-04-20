@@ -3,7 +3,7 @@
       layout:decorate="~{layouts/layout}">
 <head>
     <!-- Custom styles for this page -->
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 
 <div class="container-fluid" layout:fragment="content">
@@ -14,7 +14,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            <h6 class="m-0 font-weight-bold text-primary">물건 목록</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -34,11 +34,6 @@
                     </tr>
                     </tfoot>
                     <tbody>
-                    <tr th:each="list : ${list}">
-                        <td><a th:href="|/realty/${list.realtySeq}|" th:text="${list.realtyName}"/></td>
-                        <td th:text="${list.bname}"></td>
-                        <td th:text="${list.address}"></td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -48,12 +43,30 @@
 
 <th:block layout:fragment="script">
     <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
     <script type="text/javascript">
-        $('#dataTable').DataTable();
+        var table = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "/realty/ajax/list",
+                "type": "POST"
+            },
+            "rowId": "realtySeq",
+            "columns": [
+                { "data": "realtyName" },
+                { "data": "address" },
+                { "data": "bname" }
+            ],
+            "pagingType": "full_numbers"
+        });
+
+        $('#dataTable tbody').on('click', 'tr', function () {
+            location.href = '/realty/' + $(this).prop('id');
+        } );
     </script>
 </th:block>
 

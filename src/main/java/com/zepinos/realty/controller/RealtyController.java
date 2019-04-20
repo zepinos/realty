@@ -30,18 +30,18 @@ public class RealtyController {
     @GetMapping("")
     public String list(ModelMap modelMap) {
 
-        List<RealtyList> list = null;
-        try {
-
-            list = realtyService.list();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        modelMap.put("list", list);
+//        List<RealtyList> list = null;
+//        try {
+//
+//            list = realtyService.list();
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//        }
+//
+//        modelMap.put("list", list);
 
         return "realty/list";
 
@@ -101,6 +101,30 @@ public class RealtyController {
             try {
 
                 result = realtyService.delete(realtySeq);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
+    @PostMapping("/ajax/list")
+    @ResponseBody
+    public Callable<Map<String, Object>> ajaxList(ModelMap modelMap,
+                                                  @RequestParam int draw) {
+
+        return () -> {
+
+            Map<String, Object> result = null;
+            try {
+
+                result = realtyService.ajaxList(draw);
 
             } catch (Exception e) {
 

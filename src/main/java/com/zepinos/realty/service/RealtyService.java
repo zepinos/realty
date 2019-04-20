@@ -68,6 +68,24 @@ public class RealtyService {
 
     }
 
+    public Map<String, Object> ajaxList(int draw) throws Exception {
+
+        // realty_list 테이블 조회
+        List<RealtyList> realtyList =
+                dsl
+                        .select(REALTY_LIST.REALTY_SEQ,
+                                REALTY_LIST.REALTY_NAME,
+                                REALTY_LIST.ADDRESS,
+                                REALTY_LIST.BNAME)
+                        .from(REALTY_LIST)
+                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                        .fetchInto(RealtyList.class);
+
+        return Map.of("status", 0, "draw", draw, "recordsTotal", realtyList.size(), "recordsFiltered", realtyList.size(
+        ), "data", realtyList);
+
+    }
+
     public Map<String, Object> ajaxReadRealty(long realtySeq,
                                               double swLat, double swLng, double neLat, double neLng) throws Exception {
 
