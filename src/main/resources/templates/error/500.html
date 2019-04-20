@@ -10,8 +10,11 @@
     <div class="text-center">
         <div class="error mx-auto" data-text="500">500</div>
         <p class="lead text-gray-800 mb-5">프로그램 오류가 발생하였습니다</p>
-        <p class="text-gray-500 mb-0">동일한 문제가 반복된다면 관리자에게 문의하여 주십시오.</p>
+        <p class="text-gray-500 mb-0" th:text="${timestamp}"></p>
+        <p class="text-gray-500 mb-0">동일한 문제가 반복된다면 위 발생시간을 포함하여 관리자에게 문의하여 주십시오.</p>
         <a href="/realty">&larr; 첫 화면으로 이동</a>
+        <p />
+        <p class="text-left text-black-50 mb-0" th:text="${trace}"></p>
     </div>
 
 </div>
