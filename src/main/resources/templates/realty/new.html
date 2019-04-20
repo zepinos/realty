@@ -8,40 +8,122 @@
 </head>
 
 <div class="container-fluid" layout:fragment="content">
-    <div class="container">
-        <div class="col-md-4">
-            <button class="search-address btn btn-success">주소검색</button>
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">물건 등록</h1>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <!-- 물건 위치 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">물건 위치</h6>
+                </div>
+                <div class="card-body">
+
+                    <p>
+                        우편번호 검색 기능을 이용해 물건의 대략적인 위치를 찾습니다.<br>
+                        지도가 나타나면 물건의 정확한 위치에 위치표시기를 이동시키거나 원하는 지역을 눌러 선택합니다.
+                    </p>
+                    <button type="submit" class="search-address btn btn-info btn-block" style="margin-bottom:10px;">
+                        우편번호 검색으로 물건 위치를 찾겠습니다
+                    </button>
+
+                    <!-- 지도 영역 -->
+                    <div id="map" style="width:100%;height:0;overflow:hidden;padding-bottom:100%;display:none"></div>
+
+                </div>
+            </div>
+
         </div>
 
-        <div id="map" style="width:500px;height:500px;margin-top:10px;display:none"></div>
+        <div class="col-lg-6">
 
-        <div class="col-md-4">
-            <form method="post" class="form-realty">
-                <div>
-                    위도 <input type="text" name="lat" th:readonly="readonly" class="input-lat form-control">
-                    경도 <input type="text" name="lng" th:readonly="readonly" class="input-lng form-control">
+            <form role="form">
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">주소 정보</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="hidden" name="lat" class="input-lat">
+                            <input type="hidden" name="lng" class="input-lng">
+                            <input type="text" name="zonecode" readonly="readonly" placeholder="우편번호" tabindex="-1"
+                                   class="input-zonecode form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="address" readonly="readonly" placeholder="주소" tabindex="-1"
+                                   class="input-address form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="detailAddress" placeholder="상세주소" tabindex="-1"
+                                   class="input-detail-address form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="extraAddress" readonly="readonly" placeholder="참고항목" tabindex="-1"
+                                   class="input-extra-address form-control"/>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    우편번호 <input type="text" name="zonecode" th:readonly="readonly" class="input-zonecode form-control">
-                    주소 <input type="text" name="address" th:readonly="readonly" class="input-address form-control">
-                    상세주소 <input type="text" name="detailAddress" class="input-detail-address form-control">
-                    참고항목 <input type="text" name="extraAddress" th:readonly="readonly" class="input-extra-address form-control">
-                    시도 <input type="text" name="sido" th:readonly="readonly" class="input-sido form-control">
-                    시군구 <input type="text" name="sigungu" th:readonly="readonly" class="input-sigungu form-control">
-                    법정동 <input type="text" name="bname" th:readonly="readonly" class="input-bname form-control">
-                    행정동 <input type="text" name="hname" th:readonly="readonly" class="input-hname form-control">
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">행정 구역</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" name="sido" readonly="readonly" placeholder="시도" tabindex="-1"
+                                       class="input-sido form-control"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="text" name="sigungu" readonly="readonly" placeholder="시군구" tabindex="-1"
+                                       class="input-sigungu form-control"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <input type="text" name="bname" readonly="readonly" placeholder="법정동" tabindex="-1"
+                                       class="input-bname form-control"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <input type="text" name="hname" readonly="readonly" placeholder="행정동" tabindex="-1"
+                                       class="input-hname form-control"/>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    물건이름 <input type="text" name="realtyName" class="input-realty-name form-control">
-                    상세내용 <textarea name="realtyContent" class="input-realty-content form-control"></textarea>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">기타 정보</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <input type="text" name="realtyName" placeholder="물건 이름"
+                                   class="input-realty-name form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="realtyContent" placeholder="상세 내용"
+                                      class="input-realty-content form-control"></textarea>
+                        </div>
+                    </div>
+
                 </div>
-                <div>
-                    <button type="submit" class="button-submit form-control">저장</button>
-                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    물건 정보를 등록하겠습니다
+                </button>
 
             </form>
+
         </div>
+
     </div>
+
 </div>
 
 <th:block layout:fragment="script">
