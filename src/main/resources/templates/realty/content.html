@@ -8,42 +8,72 @@
 </head>
 
 <div class="container-fluid" layout:fragment="content">
-    <div class="container">
-        <div id="map" style="width:500px;height:500px;margin-top:10px;display:block"></div>
 
-        <div class="col-md-4">
-            <div>
-                위도 <p name="zonecode" class="form-control" th:text="${content.lat}">
-                경도
-                <p name="zonecode" class="form-control" th:text="${content.lng}">
-            </div>
-            <div>
-                우편번호 <p name="zonecode" class="form-control" th:text="${content.zonecode}"/>
-                주소 <p name="zonecode" class="form-control" th:text="${content.address}">
-                상세주소
-                <p name="zonecode" class="form-control" th:text="${content.detailAddress}">
-                    참고항목
-                <p name="zonecode" class="form-control" th:text="${content.extraAddress}">
-                    시도
-                <p name="zonecode" class="form-control" th:text="${content.sido}">
-                    시군구
-                <p name="zonecode" class="form-control" th:text="${content.sigungu}">
-                    법정동
-                <p name="zonecode" class="form-control" th:text="${content.bname}">
-                    행정동
-                <p name="zonecode" class="form-control" th:text="${content.hname}">
-            </div>
-            <div>
-                물건이름 <p name="zonecode" class="form-control" th:text="${content.realtyName}">
-                상세내용
-                <p name="zonecode" class="form-control" th:text="${content.realtyContent}">
-            </div>
-            <div>
-                <button type="button" class="button-edit form-control">수정</button>
-                <button type="button" class="button-del form-control">삭제</button>
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">물건 정보</h1>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <!-- 물건 위치 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">물건 위치</h6>
+                </div>
+                <div class="card-body">
+
+                    <!-- 지도 영역 -->
+                    <div id="map" style="width:100%;height:0;overflow:hidden;padding-bottom:100%;display:block"></div>
+
+                </div>
             </div>
 
         </div>
+
+        <div class="col-lg-6">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">주소 정보</h6>
+                </div>
+                <div class="card-body">
+                    <p th:text="${content.zonecode}"/>
+                    <p th:text="${content.address + ' ' + content.detailAddress + content.extraAddress}"/>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">행정 구역</h6>
+                </div>
+                <div class="card-body">
+                    <p th:text="${'시도 : ' + content.sido}"/>
+                    <p th:text="${'시군구 : ' + content.sigungu}"/>
+                    <p th:text="${'법정동 : ' + content.bname}"/>
+                    <p th:text="${'행정동 : ' + content.hname}"/>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">기타 정보</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-lg" th:text="${content.realtyName}"/>
+                    <p th:text="${content.realtyContent}"/>
+                </div>
+            </div>
+
+            <a th:href="@{/realty/{realtySeq}/edit(realtySeq=${content.realtySeq})}" class="btn btn-secondary btn-block">
+                물건 정보를 수정하겠습니다
+            </a>
+            <a href="javascript:" class="button-delete btn btn-danger btn-block">
+                물건을 더 이상 노출하지 않겠습니다
+            </a>
+
+        </div>
+
     </div>
 </div>
 
@@ -106,17 +136,20 @@
 
         });
 
-        $(".button-del").on('click', function () {
+        $(".button-delete").on('click', function () {
 
-            $.ajax({
-                type: 'delete',
-                url: '/realty/[[${content.realtySeq}]]',
-                success: function (data, status, xhr) {
-                    alert("삭제되었습니다.");
-                    location.href = "/realty";
-                }
+            if (confirm("정말로 노출하지 않도록 하겠습니까?")) {
 
-            });
+                $.ajax({
+                    type: 'delete',
+                    url: '/realty/[[${content.realtySeq}]]',
+                    success: function (data, status, xhr) {
+                        location.href = "/realty";
+                    }
+
+                });
+
+            }
 
         });
 

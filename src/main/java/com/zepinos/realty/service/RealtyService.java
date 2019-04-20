@@ -1,5 +1,6 @@
 package com.zepinos.realty.service;
 
+import com.zepinos.realty.jooq.enums.RealtyListRealtyStatus;
 import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.jooq.tables.records.RealtyListRecord;
 import org.jooq.DSLContext;
@@ -23,10 +24,11 @@ public class RealtyService {
     public List<RealtyList> list() throws Exception {
 
         // realty_list 테이블 조회
-        List<RealtyList> realtyList =
-                dsl.selectFrom(REALTY_LIST)
-                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
-                        .fetchInto(RealtyList.class);
+        List<RealtyList> realtyList = dsl.
+                selectFrom(REALTY_LIST)
+                .where(REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE))
+                .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                .fetchInto(RealtyList.class);
 
         return realtyList;
 
@@ -35,10 +37,11 @@ public class RealtyService {
     public RealtyList get(long realtySeq) throws Exception {
 
         // realty_list 테이블 조회
-        RealtyList realtyList =
-                dsl.selectFrom(REALTY_LIST)
-                        .where(REALTY_LIST.REALTY_SEQ.eq(realtySeq))
-                        .fetchOneInto(RealtyList.class);
+        RealtyList realtyList = dsl
+                .selectFrom(REALTY_LIST)
+                .where(REALTY_LIST.REALTY_SEQ.eq(realtySeq)
+                        .and(REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE)))
+                .fetchOneInto(RealtyList.class);
 
         return realtyList;
 
@@ -59,8 +62,10 @@ public class RealtyService {
 
     public Map<String, Object> delete(long realtySeq) throws Exception {
 
-        // realty_list 테이블 저장
-        int cnt = dsl.deleteFrom(REALTY_LIST)
+        // realty_list 테이블에 상태 저장
+        int cnt = dsl
+                .update(REALTY_LIST)
+                .set(REALTY_LIST.REALTY_STATUS, RealtyListRealtyStatus.HIDDEN)
                 .where(REALTY_LIST.REALTY_SEQ.eq(realtySeq))
                 .execute();
 
@@ -71,15 +76,15 @@ public class RealtyService {
     public Map<String, Object> ajaxList(int draw) throws Exception {
 
         // realty_list 테이블 조회
-        List<RealtyList> realtyList =
-                dsl
-                        .select(REALTY_LIST.REALTY_SEQ,
-                                REALTY_LIST.REALTY_NAME,
-                                REALTY_LIST.ADDRESS,
-                                REALTY_LIST.BNAME)
-                        .from(REALTY_LIST)
-                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
-                        .fetchInto(RealtyList.class);
+        List<RealtyList> realtyList = dsl
+                .select(REALTY_LIST.REALTY_SEQ,
+                        REALTY_LIST.REALTY_NAME,
+                        REALTY_LIST.ADDRESS,
+                        REALTY_LIST.BNAME)
+                .from(REALTY_LIST)
+                .where(REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE))
+                .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                .fetchInto(RealtyList.class);
 
         return Map.of("status", 0, "draw", draw, "recordsTotal", realtyList.size(), "recordsFiltered", realtyList.size(
         ), "data", realtyList);
@@ -90,18 +95,18 @@ public class RealtyService {
                                               double swLat, double swLng, double neLat, double neLng) throws Exception {
 
         // 주변 물건 조회
-        List<RealtyList> realtyList =
-                dsl.select(REALTY_LIST.REALTY_SEQ,
+        List<RealtyList> realtyList = dsl
+                .select(REALTY_LIST.REALTY_SEQ,
                         REALTY_LIST.REALTY_NAME,
                         REALTY_LIST.LAT,
                         REALTY_LIST.LNG)
-                        .from(REALTY_LIST)
-                        .where(REALTY_LIST.REALTY_SEQ.ne(realtySeq)
-                                .and(REALTY_LIST.LAT.between(swLat, neLat))
-                                .and(REALTY_LIST.LNG.between(swLng, neLng))
-                        )
-                        .orderBy(REALTY_LIST.REALTY_SEQ.desc())
-                        .fetchInto(RealtyList.class);
+                .from(REALTY_LIST)
+                .where(REALTY_LIST.REALTY_SEQ.ne(realtySeq)
+                        .and(REALTY_LIST.LAT.between(swLat, neLat))
+                        .and(REALTY_LIST.LNG.between(swLng, neLng))
+                )
+                .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                .fetchInto(RealtyList.class);
 
         return Map.of("status", 0, "list", realtyList);
 
