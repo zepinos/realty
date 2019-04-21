@@ -56,7 +56,7 @@ public class RealtyService {
 
         int cnt = realtyListRecord.store();
 
-        return Map.of("status", 0, "count", cnt);
+        return Map.of("status", 0, "count", cnt, "realtySeq", realtyListRecord.getRealtySeq());
 
     }
 

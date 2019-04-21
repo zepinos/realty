@@ -138,6 +138,7 @@
                         <generate>
                             <javaTimeTypes>true</javaTimeTypes>
                             <pojos>true</pojos>
+                            <validationAnnotations>true</validationAnnotations>
 <!--                            <daos>true</daos>-->
                         </generate>
                         <target>

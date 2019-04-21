@@ -41,7 +41,7 @@
 
         <div class="col-lg-6">
 
-            <form role="form">
+            <form role="form" class="form-realty">
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -351,8 +351,13 @@
                 url: '/realty',
                 data: $(this).serialize(),
                 success: function (data, status, xhr) {
-                    alert("입력되었습니다.");
-                    // location.href = "/realty";
+
+                    var status = data.status;
+                    if (status == 0)
+                        location.href = "/realty/" + data.realtySeq;
+                    else if (status == 1001) {
+                        alert(data.message);
+                    }
                 }
 
             });
