@@ -61,7 +61,7 @@
                 </div>
                 <div class="card-body">
                     <p class="text-lg" th:text="${content.realtyName}"/>
-                    <p th:text="${content.realtyContent}"/>
+                    <p th:utext="${content.realtyContent}" th:remove="tag"/>
                 </div>
             </div>
 
