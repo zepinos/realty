@@ -1,5 +1,6 @@
 package com.zepinos.realty.controller;
 
+import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.service.RealtyService;
 import lombok.extern.slf4j.Slf4j;
@@ -169,15 +170,16 @@ public class RealtyController {
 
     @PostMapping("/ajax/list")
     @ResponseBody
-    public Callable<Map<String, Object>> ajaxList(ModelMap modelMap,
-                                                  @RequestParam int draw) {
+    public Callable<Map<String, Object>> ajaxList(@ModelAttribute SearchDto searchDto) {
 
         return () -> {
 
             Map<String, Object> result = null;
             try {
 
-                result = realtyService.ajaxList(draw);
+                log.info("searchDto : {}", searchDto);
+
+                result = realtyService.ajaxList(searchDto);
 
             } catch (Exception e) {
 

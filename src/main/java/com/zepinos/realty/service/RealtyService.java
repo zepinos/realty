@@ -1,9 +1,14 @@
 package com.zepinos.realty.service;
 
+import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.jooq.enums.RealtyListRealtyStatus;
 import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.jooq.tables.records.RealtyListRecord;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SelectField;
+import org.jooq.Table;
+import org.jooq.tools.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.zepinos.realty.jooq.tables.RealtyList.REALTY_LIST;
+import static org.jooq.impl.DSL.count;
 
 @Service
 public class RealtyService {
@@ -86,21 +92,54 @@ public class RealtyService {
 
     }
 
-    public Map<String, Object> ajaxList(int draw) throws Exception {
+    public Map<String, Object> ajaxList(SearchDto searchDto) throws Exception {
+
+        var search = searchDto.getSearch();
+        var searchValue = search.get("value");
 
         // realty_list 테이블 조회
+        SelectField<?>[] selectCount = {count()};
+        SelectField<?>[] select = {
+                REALTY_LIST.REALTY_SEQ,
+                REALTY_LIST.REALTY_NAME,
+                REALTY_LIST.ADDRESS,
+                REALTY_LIST.BNAME
+        };
+        Table<?> from = REALTY_LIST;
+        Condition where = REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE);
+        Condition and = null;
+        if (!StringUtils.isEmpty(searchValue)) {
+
+            and = where.and(REALTY_LIST.REALTY_NAME.like("%" + searchValue + "%")
+                    .or(REALTY_LIST.ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.DETAIL_ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.EXTRA_ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.BNAME.like("%" + searchValue + "%")));
+
+        }
+
+        Long recordsTotal = dsl
+                .select(selectCount)
+                .from(from)
+                .where(where)
+                .fetchOne(0, Long.class);
+
+        Long recordsFiltered = dsl
+                .select(selectCount)
+                .from(from)
+                .where(where)
+                .fetchOne(0, Long.class);
+
         List<RealtyList> realtyList = dsl
-                .select(REALTY_LIST.REALTY_SEQ,
-                        REALTY_LIST.REALTY_NAME,
-                        REALTY_LIST.ADDRESS,
-                        REALTY_LIST.BNAME)
-                .from(REALTY_LIST)
-                .where(REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE))
+                .select(select)
+                .from(from)
+                .where(where)
                 .orderBy(REALTY_LIST.REALTY_SEQ.desc())
+                .limit(searchDto.getLength())
+                .offset(searchDto.getStart())
                 .fetchInto(RealtyList.class);
 
-        return Map.of("status", 0, "draw", draw, "recordsTotal", realtyList.size(), "recordsFiltered", realtyList.size(
-        ), "data", realtyList);
+        return Map.of("status", 0, "draw", searchDto.getDraw(), "recordsTotal", recordsTotal, "recordsFiltered", recordsFiltered, "data", realtyList);
 
     }
 

@@ -22,15 +22,15 @@
                     <thead>
                     <tr>
                         <th>물건 이름</th>
-                        <th>법정동</th>
                         <th>주소</th>
+                        <th>법정동</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
                         <th>물건 이름</th>
-                        <th>법정동</th>
                         <th>주소</th>
+                        <th>법정동</th>
                     </tr>
                     </tfoot>
                     <tbody>
@@ -57,16 +57,18 @@
             },
             "rowId": "realtySeq",
             "columns": [
-                { "data": "realtyName" },
-                { "data": "address" },
-                { "data": "bname" }
+                {"data": "realtyName"},
+                {"data": "address"},
+                {"data": "bname"}
             ],
-            "pagingType": "full_numbers"
+            "ordering": false,
+            "pagingType": "full_numbers",
+            "lengthMenu": [2, 50, 100]
         });
 
         $('#dataTable tbody').on('click', 'tr', function () {
             location.href = '/realty/' + $(this).prop('id');
-        } );
+        });
     </script>
 </th:block>
 
