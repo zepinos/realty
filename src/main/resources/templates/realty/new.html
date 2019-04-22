@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
+    <link href="/vendor/summernote/summernote-bs4.css" rel="stylesheet">
+
     <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=898ef3f58fbd61e694f90c5384670dc7&libraries=clusterer,services,drawing"></script>
@@ -107,7 +109,7 @@
                                    class="input-realty-name form-control"/>
                         </div>
                         <div class="form-group">
-                            <textarea name="realtyContent" placeholder="상세 내용"
+                            <textarea name="realtyContent" id="realtyContent" placeholder="상세 내용"
                                       class="input-realty-content form-control"></textarea>
                         </div>
                     </div>
@@ -127,12 +129,15 @@
 </div>
 
 <th:block layout:fragment="script">
+
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         /* ]]> */
     </script>
 
     <script type="text/javascript">
+
+
         var container = document.getElementById('map');
         var options = {
             center: new daum.maps.LatLng(37.48683046398042, 126.8915661110265),
@@ -365,6 +370,21 @@
         });
 
     </script>
+
+    <script src="/vendor/summernote/summernote-bs4.js"></script>
+    <script src="/vendor/summernote/lang/summernote-ko-KR.js"></script>
+    <script type="text/javascript">
+
+        // editor 초기화
+        $('#realtyContent').summernote({
+            lang: 'ko-KR',
+            height: 200,
+            minHeight: 100
+        });
+
+    </script>
+
+
 </th:block>
 
 </html>
