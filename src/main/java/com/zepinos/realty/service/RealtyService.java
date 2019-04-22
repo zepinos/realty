@@ -60,6 +60,19 @@ public class RealtyService {
 
     }
 
+    public Map<String, Object> put(RealtyList realtyList) throws Exception {
+
+        // realty_list 테이블 저장
+        RealtyListRecord realtyListRecord = dsl.newRecord(REALTY_LIST, realtyList);
+        realtyListRecord.setDateMod(LocalDateTime.now());
+
+        int cnt = dsl.
+                executeUpdate(realtyListRecord);
+
+        return Map.of("status", 0, "count", cnt, "realtySeq", realtyListRecord.getRealtySeq());
+
+    }
+
     public Map<String, Object> delete(long realtySeq) throws Exception {
 
         // realty_list 테이블에 상태 저장

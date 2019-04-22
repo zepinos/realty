@@ -9,7 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -84,6 +83,54 @@ public class RealtyController {
             try {
 
                 result = realtyService.post(realtyList);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
+    @GetMapping("/{realtySeq}/edit")
+    public String edit(ModelMap modelMap,
+                       @PathVariable long realtySeq) {
+
+        RealtyList content = null;
+        try {
+
+            content = realtyService.get(realtySeq);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        modelMap.put("content", content);
+
+        return "realty/edit";
+
+    }
+
+    @PutMapping("/{realtySeq}")
+    @ResponseBody
+    public Callable<Map<String, Object>> put(@Valid @ModelAttribute RealtyList realtyList,
+                                              BindingResult bindingResult) {
+
+        return () -> {
+
+            if (bindingResult.hasErrors())
+                return Map.of("status", 1001, "message", "매개변수 오류", "field_errors", bindingResult.getFieldErrors());
+
+            Map<String, Object> result = null;
+            try {
+
+                result = realtyService.put(realtyList);
 
             } catch (Exception e) {
 
