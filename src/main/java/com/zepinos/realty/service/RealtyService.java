@@ -107,22 +107,23 @@ public class RealtyService {
         };
         Table<?> from = REALTY_LIST;
         Condition where = REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE);
-        Condition and = null;
-        if (!StringUtils.isEmpty(searchValue)) {
-
-            and = where.and(REALTY_LIST.REALTY_NAME.like("%" + searchValue + "%")
-                    .or(REALTY_LIST.ADDRESS.like("%" + searchValue + "%"))
-                    .or(REALTY_LIST.DETAIL_ADDRESS.like("%" + searchValue + "%"))
-                    .or(REALTY_LIST.EXTRA_ADDRESS.like("%" + searchValue + "%"))
-                    .or(REALTY_LIST.BNAME.like("%" + searchValue + "%")));
-
-        }
 
         Long recordsTotal = dsl
                 .select(selectCount)
                 .from(from)
                 .where(where)
                 .fetchOne(0, Long.class);
+
+        Condition and = null;
+        if (!StringUtils.isEmpty(searchValue)) {
+
+            where = where.and(REALTY_LIST.REALTY_NAME.like("%" + searchValue + "%")
+                    .or(REALTY_LIST.ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.DETAIL_ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.EXTRA_ADDRESS.like("%" + searchValue + "%"))
+                    .or(REALTY_LIST.BNAME.like("%" + searchValue + "%")));
+
+        }
 
         Long recordsFiltered = dsl
                 .select(selectCount)
