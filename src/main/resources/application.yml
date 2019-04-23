@@ -12,3 +12,6 @@ spring:
 logging:
   level:
     org.jooq: debug
+    org.springframework.security.provisioning: debug
+    org.springframework.security.authentication.dao: debug
+
