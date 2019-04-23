@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" th:fragment="sidebarFragment">
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"
+    th:fragment="sidebarFragment">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/realty">
@@ -17,15 +18,54 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseRealty" aria-expanded="true"
+           aria-controls="collapseRealty">
             <i class="fas fa-fw fa-table"></i>
             <span>물건장</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseRealty" class="collapse" aria-labelledby="headingRealy" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">물건 관리:</h6>
                 <a class="collapse-item" href="/realty/new">물건 등록</a>
                 <a class="collapse-item" href="/realty">물건 목록</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0" sec:authorize="hasAuthority('ROLE_GROUP')">
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item" sec:authorize="hasAuthority('ROLE_GROUP')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGroup" aria-expanded="true"
+           aria-controls="collapseGroup">
+            <i class="fas fa-fw fa-table"></i>
+            <span>그룹 관리</span>
+        </a>
+        <div id="collapseGroup" class="collapse" aria-labelledby="headingGroup" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">사용자:</h6>
+                <a class="collapse-item" href="/group/users/new">사용자 등록</a>
+                <a class="collapse-item" href="/group/users">사용자 목록</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0" sec:authorize="hasAuthority('ROLE_ADMIN')">
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item" sec:authorize="hasAuthority('ROLE_ADMIN')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAdmin" aria-expanded="true"
+           aria-controls="collapseAdmin">
+            <i class="fas fa-fw fa-table"></i>
+            <span>프로그램 관리</span>
+        </a>
+        <div id="collapseAdmin" class="collapse" aria-labelledby="headingAdmin" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">그룹:</h6>
+                <a class="collapse-item" href="/admin/groups/new">그룹 등록</a>
+                <a class="collapse-item" href="/admin/groups">그룹 목록</a>
             </div>
         </div>
     </li>
