@@ -27,19 +27,6 @@ public class RealtyService {
         this.dsl = dsl;
     }
 
-    public List<RealtyList> list() throws Exception {
-
-        // realty_list 테이블 조회
-        List<RealtyList> realtyList = dsl.
-                selectFrom(REALTY_LIST)
-                .where(REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE))
-                .orderBy(REALTY_LIST.REALTY_SEQ.desc())
-                .fetchInto(RealtyList.class);
-
-        return realtyList;
-
-    }
-
     public RealtyList get(long realtySeq) throws Exception {
 
         // realty_list 테이블 조회
