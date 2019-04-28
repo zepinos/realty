@@ -1,14 +1,15 @@
 package com.zepinos.realty.service;
 
 import com.zepinos.realty.dto.SearchDto;
+import com.zepinos.realty.dto.admin.GroupList;
 import com.zepinos.realty.jooq.tables.Authorities;
 import com.zepinos.realty.jooq.tables.GroupUsers;
 import com.zepinos.realty.jooq.tables.Groups;
 import com.zepinos.realty.jooq.tables.Users;
-import org.jooq.DSLContext;
-import org.jooq.Field;
+import org.jooq.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,7 @@ import static com.zepinos.realty.jooq.tables.Authorities.AUTHORITIES;
 import static com.zepinos.realty.jooq.tables.GroupUsers.GROUP_USERS;
 import static com.zepinos.realty.jooq.tables.Groups.GROUPS;
 import static com.zepinos.realty.jooq.tables.Users.USERS;
-import static org.jooq.impl.DSL.concat;
-import static org.jooq.impl.DSL.val;
+import static org.jooq.impl.DSL.*;
 
 @Service
 public class AdminService {
@@ -36,7 +36,7 @@ public class AdminService {
         Authorities Z = AUTHORITIES.as("Z");
         Groups A = GROUPS.as("A");
 
-        Field<Object> USER_REAL_NAME = dsl
+        Field<Object> GROUP_ADMIN = dsl
                 .select(concat(Y.USER_REAL_NAME, val("("), Y.USERNAME, val(")")))
                 .from(X)
                 .join(Y)
@@ -44,19 +44,44 @@ public class AdminService {
                 .join(Z)
                 .on(Z.USER_SEQ.eq(Y.USER_SEQ))
                 .and(Z.AUTHORITY.eq("ROLE_GROUP"))
-                .asField("user_real_name");
+                .asField("group_admin");
 
-        List<Map<String, Object>> groupList = dsl.
-                select(
+        var R = dsl
+                .select(
                         A.GROUP_NAME,
-                        USER_REAL_NAME,
+                        GROUP_ADMIN,
                         A.EXPIRE_DATETIME,
                         A.MAX_USERS
                 )
                 .from(A)
-                .fetchMaps();
+                .orderBy(A.GROUP_NAME)
+                .asTable("R");
 
-        return Map.of("status", 0, "draw", searchDto.getDraw(), "recordsTotal", 3, "recordsFiltered", 3, "data", groupList);
+        int recordsTotal = dsl
+                .selectCount()
+                .from(R)
+                .fetchOne(0, int.class);
+
+        var search = searchDto.getSearch();
+        var searchValue = search.get("value");
+
+        int recordsFiltered = dsl
+                .selectCount()
+                .from(R)
+                .where(field("group_name").like(concat(val("%"), val(searchValue), val("%"))))
+                .or(field("group_admin").like(concat(val("%"), val(searchValue), val("%"))))
+                .fetchOne(0, int.class);
+
+        List<GroupList> groupLists = dsl
+                .select()
+                .from(R)
+                .where(field("group_name").like(concat(val("%"), val(searchValue), val("%"))))
+                .or(field("group_admin").like(concat(val("%"), val(searchValue), val("%"))))
+                .limit(searchDto.getLength())
+                .offset(searchDto.getStart())
+                .fetchInto(GroupList.class);
+
+        return Map.of("status", 0, "draw", searchDto.getDraw(), "recordsTotal", recordsTotal, "recordsFiltered", recordsFiltered, "data", groupLists);
 
     }
 
