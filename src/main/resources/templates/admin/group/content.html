@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+</head>
+
+<div class="container-fluid" layout:fragment="content">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">물건 정보</h1>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <!-- 그룹 정보 -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">그룹 정보</h6>
+                </div>
+                <div class="card-body">
+                    <p th:text="${'그룹 이름 : ' + content.groupName}"/>
+                    <p th:text="${'관리 계정 : ' + content.groupAdmin}"/>
+                    <p th:text="${'만료 일시 : ' + content.expireDatetimeString}"/>
+                    <p th:text="${'허용 인원 : ' + content.maxUsers}"/>
+                    <p th:text="${'현재 인원 : ' + content.currentUsers}"/>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+        </div>
+
+    </div>
+
+</div>
+
+<th:block layout:fragment="script">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        /* ]]> */
+    </script>
+
+    <script type="text/javascript">
+
+        $(".button-delete").on('click', function () {
+
+            if (confirm("정말로 그룹을 사용중시 하겠습니까?")) {
+
+                $.ajax({
+                    type: 'delete',
+                    url: '/admin/group/[[${content.groupSeq}]]',
+                    success: function (data, status, xhr) {
+                        location.href = "/admin/group";
+                    }
+
+                });
+
+            }
+
+        });
+
+    </script>
+</th:block>
+
+</html>

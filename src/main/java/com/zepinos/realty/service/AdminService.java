@@ -1,15 +1,16 @@
 package com.zepinos.realty.service;
 
 import com.zepinos.realty.dto.SearchDto;
+import com.zepinos.realty.dto.admin.GroupGet;
 import com.zepinos.realty.dto.admin.GroupList;
 import com.zepinos.realty.jooq.tables.Authorities;
 import com.zepinos.realty.jooq.tables.GroupUsers;
 import com.zepinos.realty.jooq.tables.Groups;
 import com.zepinos.realty.jooq.tables.Users;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,18 @@ public class AdminService {
 
     public AdminService(DSLContext dsl) {
         this.dsl = dsl;
+    }
+
+    public GroupGet get(int groupSeq) throws Exception {
+
+        // group 테이블 조회
+        GroupGet groupGet = dsl
+                .selectFrom(GROUPS)
+                .where(GROUPS.GROUP_SEQ.eq(groupSeq))
+                .fetchOneInto(GroupGet.class);
+        System.out.println(groupGet);
+        return groupGet;
+
     }
 
     public Map<String, Object> ajaxGroupList(SearchDto searchDto) throws Exception {

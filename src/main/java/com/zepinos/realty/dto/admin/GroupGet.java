@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.format.DateTimeFormatter;
 
 @Data
-public class GroupList extends Groups {
+public class GroupGet extends Groups {
 
     private String groupAdmin;
     private String expireDatetimeString;

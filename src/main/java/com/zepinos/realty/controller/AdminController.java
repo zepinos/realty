@@ -1,6 +1,8 @@
 package com.zepinos.realty.controller;
 
 import com.zepinos.realty.dto.SearchDto;
+import com.zepinos.realty.dto.admin.GroupGet;
+import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,27 @@ public class AdminController {
 
     @GetMapping("/group")
     public String list(ModelMap modelMap) {
-
         return "admin/group/list";
+    }
+
+    @GetMapping("/group/{groupSeq}")
+    public String get(ModelMap modelMap,
+                      @PathVariable int groupSeq) {
+
+        GroupGet content = null;
+        try {
+
+            content = adminService.get(groupSeq);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        modelMap.put("content", content);
+
+        return "admin/group/content";
 
     }
 

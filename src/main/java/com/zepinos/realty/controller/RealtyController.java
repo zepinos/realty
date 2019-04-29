@@ -31,22 +31,7 @@ public class RealtyController {
 
     @GetMapping("")
     public String list(ModelMap modelMap) {
-
-//        List<RealtyList> list = null;
-//        try {
-//
-//            list = realtyService.list();
-//
-//        } catch (Exception e) {
-//
-//            e.printStackTrace();
-//
-//        }
-//
-//        modelMap.put("list", list);
-
         return "realty/list";
-
     }
 
     @GetMapping("/{realtySeq}")
