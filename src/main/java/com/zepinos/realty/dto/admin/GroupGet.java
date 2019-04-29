@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class GroupGet extends Groups {
 
+    private int groupAdminSeq;
     private String groupAdmin;
     private String expireDatetimeString;
     private int currentUsers;

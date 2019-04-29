@@ -9,6 +9,8 @@ import com.zepinos.realty.jooq.tables.Groups;
 import com.zepinos.realty.jooq.tables.Users;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record1;
+import org.jooq.Record2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +38,45 @@ public class AdminService {
                 .selectFrom(GROUPS)
                 .where(GROUPS.GROUP_SEQ.eq(groupSeq))
                 .fetchOneInto(GroupGet.class);
-        System.out.println(groupGet);
+
+        // group 관리자 조회
+        Record2<Integer, String> groupAdmin = dsl
+                .select(USERS.USER_SEQ.as("group_seq"),
+                        concat(USERS.USER_REAL_NAME, val("("), USERS.USERNAME, val(")")).as("group_admin"))
+                .from(USERS)
+                .join(AUTHORITIES)
+                .on(AUTHORITIES.USER_SEQ.eq(USERS.USER_SEQ))
+                .and(AUTHORITIES.AUTHORITY.eq("ROLE_GROUP"))
+                .join(GROUP_USERS)
+                .on(GROUP_USERS.USER_SEQ.eq(USERS.USER_SEQ))
+                .and(GROUP_USERS.GROUP_SEQ.eq(groupSeq))
+                .where(USERS.ENABLED.eq("1"))
+                .limit(1)
+                .fetchOne();
+
+        if (groupAdmin != null) {
+
+            groupGet.setGroupAdminSeq(groupAdmin.value1());
+            groupGet.setGroupAdmin(groupAdmin.value2());
+
+        }
+
+        // group 내 활성화 사용자 수 조회
+        Record1<Integer> currentUsers = dsl
+                .select(countDistinct(USERS.USER_SEQ))
+                .from(USERS)
+                .join(AUTHORITIES)
+                .on(AUTHORITIES.USER_SEQ.eq(USERS.USER_SEQ))
+                .and(AUTHORITIES.AUTHORITY.in("ROLE_USER", "ROLE_GROUP"))
+                .join(GROUP_USERS)
+                .on(GROUP_USERS.USER_SEQ.eq(USERS.USER_SEQ))
+                .and(GROUP_USERS.GROUP_SEQ.eq(groupSeq))
+                .where(USERS.ENABLED.eq("1"))
+                .fetchOne();
+
+        if (currentUsers != null)
+            groupGet.setCurrentUsers(currentUsers.value1());
+
         return groupGet;
 
     }
