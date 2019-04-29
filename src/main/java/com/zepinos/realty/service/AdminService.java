@@ -44,14 +44,26 @@ public class AdminService {
                 .join(Z)
                 .on(Z.USER_SEQ.eq(Y.USER_SEQ))
                 .and(Z.AUTHORITY.eq("ROLE_GROUP"))
+                .where(X.GROUP_SEQ.eq(A.GROUP_SEQ))
                 .asField("group_admin");
+
+        Field<Object> CURRENT_USERS = dsl
+                .selectCount()
+                .from(GROUP_USERS)
+                .join(USERS)
+                .on(USERS.USER_SEQ.eq(GROUP_USERS.USER_SEQ))
+                .where(USERS.ENABLED.eq("1"))
+                .and(GROUP_USERS.GROUP_SEQ.eq(A.GROUP_SEQ))
+                .asField("currentUsers");
 
         var R = dsl
                 .select(
+                        A.GROUP_SEQ,
                         A.GROUP_NAME,
                         GROUP_ADMIN,
                         A.EXPIRE_DATETIME,
-                        A.MAX_USERS
+                        A.MAX_USERS,
+                        CURRENT_USERS
                 )
                 .from(A)
                 .orderBy(A.GROUP_NAME)

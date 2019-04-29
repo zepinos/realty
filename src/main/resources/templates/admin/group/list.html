@@ -10,7 +10,8 @@
 
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">그룹 목록</h1>
-    <p class="mb-4">그룹 목록을 조회할 수 있습니다. 그룹은 회사 혹은 조직의 단위이며 사용 유효기간, 회원 수를 설정할 수 있습니다.</p>
+    <p class="mb-4">그룹 목록을 조회할 수 있습니다.</p>
+    <p class="mb-4">그룹은 회사 혹은 조직의 단위이며 사용 유효기간, 허용인원 수를 설정할 수 있습니다.</p>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -24,7 +25,7 @@
                         <th>그룹 이름</th>
                         <th>관리자</th>
                         <th>만료일</th>
-                        <th>총인원</th>
+                        <th>허용인원</th>
                         <th>현재인원</th>
                     </tr>
                     </thead>
@@ -33,7 +34,7 @@
                         <th>그룹 이름</th>
                         <th>관리자</th>
                         <th>만료일</th>
-                        <th>총인원</th>
+                        <th>허용인원</th>
                         <th>현재인원</th>
                     </tr>
                     </tfoot>
@@ -63,7 +64,7 @@
             "columns": [
                 {"data": "groupName"},
                 {"data": "groupAdmin"},
-                {"data": "expireDateTime"},
+                {"data": "expireDatetime"},
                 {"data": "maxUsers"},
                 {"data": "currentUsers"}
             ],
@@ -73,7 +74,7 @@
         });
 
         $('#dataTable tbody').on('click', 'tr', function () {
-            location.href = './' + $(this).prop('id');
+            location.href = '/admin/group/' + $(this).prop('id');
         });
     </script>
 </th:block>
