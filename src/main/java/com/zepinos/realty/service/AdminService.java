@@ -101,7 +101,7 @@ public class AdminService {
                 .asField("group_admin");
 
         Field<Object> CURRENT_USERS = dsl
-                .selectCount()
+                .select(countDistinct(USERS.USER_SEQ))
                 .from(GROUP_USERS)
                 .join(USERS)
                 .on(USERS.USER_SEQ.eq(GROUP_USERS.USER_SEQ))
