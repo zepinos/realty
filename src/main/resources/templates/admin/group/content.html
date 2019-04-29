@@ -31,6 +31,14 @@
 
         <div class="col-lg-6">
 
+            <a th:href="@{/admin/group/{groupSeq}/edit(groupSeq=${content.groupSeq})}"
+               class="btn btn-secondary btn-block">
+                그룹 정보를 수정하겠습니다
+            </a>
+            <a href="javascript:" class="button-delete btn btn-danger btn-block">
+                그룹을 더 이상 사용하지 않겠습니다
+            </a>
+
         </div>
 
     </div>
