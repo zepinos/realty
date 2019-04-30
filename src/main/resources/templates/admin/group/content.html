@@ -27,10 +27,6 @@
                 </div>
             </div>
 
-        </div>
-
-        <div class="col-lg-6">
-
             <a th:href="@{/admin/group/{groupSeq}/edit(groupSeq=${content.groupSeq})}"
                class="btn btn-secondary btn-block">
                 그룹 정보를 수정하겠습니다
@@ -41,17 +37,71 @@
 
         </div>
 
+        <div class="col-lg-6">
+
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">그룹 사용자 목록</h6>
+                </div>
+                <div class="card-body">
+                    <div >
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>사용여부</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            <tr>
+                                <th>이름</th>
+                                <th>아이디</th>
+                                <th>사용여부</th>
+                            </tr>
+                            </tfoot>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
 <th:block layout:fragment="script">
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         /* ]]> */
     </script>
 
     <script type="text/javascript">
+
+        var table = $('#dataTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "/admin/ajax/group/[[${content.groupSeq}]]",
+                "type": "get"
+            },
+            "columns": [
+                {"data": "userRealName"},
+                {"data": "username"},
+                {"data": "enabled"}
+            ],
+            "ordering": false,
+            "paging": false,
+            "searching": false,
+            "info": false
+        });
 
         $(".button-delete").on('click', function () {
 

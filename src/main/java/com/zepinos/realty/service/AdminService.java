@@ -81,6 +81,26 @@ public class AdminService {
 
     }
 
+    public Map<String, Object> ajaxGroupUsers(SearchDto searchDto, int groupSeq) throws Exception {
+
+        // users, group_users 테이블 조회
+        List<com.zepinos.realty.jooq.tables.pojos.Users> users = dsl
+                .selectDistinct(
+                        USERS.USERNAME,
+                        USERS.USER_REAL_NAME,
+                        when(USERS.ENABLED.eq("1"), "정상").
+                                otherwise("중지").as("enabled"))
+                .from(USERS)
+                .join(GROUP_USERS)
+                .on(GROUP_USERS.USER_SEQ.eq(USERS.USER_SEQ))
+                .and(GROUP_USERS.GROUP_SEQ.eq(groupSeq))
+                .orderBy(USERS.ENABLED.desc(), USERS.USER_REAL_NAME)
+                .fetchInto(com.zepinos.realty.jooq.tables.pojos.Users.class);
+
+        return Map.of("status", 0, "draw", searchDto.getDraw(), "data", users);
+
+    }
+
     public Map<String, Object> ajaxGroupList(SearchDto searchDto) throws Exception {
 
         // groups, group_users 테이블 조회

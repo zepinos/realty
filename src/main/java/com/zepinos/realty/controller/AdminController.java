@@ -2,7 +2,6 @@ package com.zepinos.realty.controller;
 
 import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.dto.admin.GroupGet;
-import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -46,6 +45,32 @@ public class AdminController {
         modelMap.put("content", content);
 
         return "admin/group/content";
+
+    }
+
+    @GetMapping("/ajax/group/{groupSeq}")
+    @ResponseBody
+    public Callable<Map<String, Object>> ajaxGroupUsers(@ModelAttribute SearchDto searchDto,
+                                                        @PathVariable int groupSeq) {
+
+        return () -> {
+
+            Map<String, Object> result = null;
+            try {
+
+                log.info("searchDto : {}", searchDto);
+
+                result = adminService.ajaxGroupUsers(searchDto, groupSeq);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
 
     }
 
