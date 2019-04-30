@@ -34,7 +34,7 @@ public class AdminController {
         GroupGet content = null;
         try {
 
-            content = adminService.get(groupSeq);
+            content = adminService.getGroup(groupSeq);
 
         } catch (Exception e) {
 
@@ -45,6 +45,27 @@ public class AdminController {
         modelMap.put("content", content);
 
         return "admin/group/content";
+
+    }
+
+    @GetMapping("/group/{groupSeq}/edit")
+    public String edit(ModelMap modelMap,
+                       @PathVariable int groupSeq) {
+
+        GroupGet content = null;
+        try {
+
+            content = adminService.getGroup(groupSeq);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        modelMap.put("content", content);
+
+        return "admin/group/edit";
 
     }
 

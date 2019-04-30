@@ -14,7 +14,7 @@ public class GroupGet extends Groups {
     private int currentUsers;
 
     public String getExpireDatetimeString() {
-        return getExpireDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return getExpireDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
 }

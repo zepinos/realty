@@ -31,7 +31,7 @@ public class AdminService {
         this.dsl = dsl;
     }
 
-    public GroupGet get(int groupSeq) throws Exception {
+    public GroupGet getGroup(int groupSeq) throws Exception {
 
         // group 테이블 조회
         GroupGet groupGet = dsl
