@@ -3,6 +3,7 @@ package com.zepinos.realty.dto.admin;
 import com.zepinos.realty.jooq.tables.pojos.Groups;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -15,6 +16,10 @@ public class GroupGet extends Groups {
 
     public String getExpireDatetimeString() {
         return getExpireDatetime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    public void setExpireDatetimeString(String expireDatetimeString) {
+        setExpireDatetime(LocalDateTime.parse(expireDatetimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
     }
 
 }

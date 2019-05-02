@@ -6,8 +6,10 @@ import com.zepinos.realty.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -107,6 +109,33 @@ public class AdminController {
                 log.info("searchDto : {}", searchDto);
 
                 result = adminService.ajaxGroupList(searchDto);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
+    @PutMapping("/group/{groupSeq}")
+    @ResponseBody
+    public Callable<Map<String, Object>> put(@Valid @ModelAttribute GroupGet groupGet,
+                                             BindingResult bindingResult) {
+
+        return () -> {
+
+            if (bindingResult.hasErrors())
+                return Map.of("status", 1001, "message", "매개변수 오류", "field_errors", bindingResult.getFieldErrors());
+
+            Map<String, Object> result = null;
+            try {
+
+                result = adminService.putGroup(groupGet);
 
             } catch (Exception e) {
 

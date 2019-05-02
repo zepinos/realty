@@ -7,12 +7,14 @@ import com.zepinos.realty.jooq.tables.Authorities;
 import com.zepinos.realty.jooq.tables.GroupUsers;
 import com.zepinos.realty.jooq.tables.Groups;
 import com.zepinos.realty.jooq.tables.Users;
+import com.zepinos.realty.jooq.tables.records.GroupsRecord;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +80,19 @@ public class AdminService {
             groupGet.setCurrentUsers(currentUsers.value1());
 
         return groupGet;
+
+    }
+
+    public Map<String, Object> putGroup(GroupGet groupGet) throws Exception {
+
+        // groups 테이블 저장
+        GroupsRecord groupsRecord = dsl.newRecord(GROUPS, groupGet);
+        groupsRecord.setDateMod(LocalDateTime.now());
+
+        int cnt = dsl.
+                executeUpdate(groupsRecord);
+
+        return Map.of("status", 0, "count", cnt, "groupSeq", groupsRecord.getGroupSeq());
 
     }
 
