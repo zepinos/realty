@@ -98,6 +98,7 @@ public class GroupService {
         // users, group_users 테이블 조회
         List<com.zepinos.realty.jooq.tables.pojos.Users> users = dsl
                 .selectDistinct(
+                        USERS.USER_SEQ,
                         USERS.USERNAME,
                         USERS.USER_REAL_NAME,
                         when(USERS.ENABLED.eq("1"), "정상").

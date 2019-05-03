@@ -2,6 +2,7 @@ package com.zepinos.realty.controller.admin;
 
 import com.zepinos.realty.dto.RealtyUserDetails;
 import com.zepinos.realty.dto.group.GroupGet;
+import com.zepinos.realty.dto.user.UserGet;
 import com.zepinos.realty.jooq.tables.pojos.Users;
 import com.zepinos.realty.service.admin.GroupService;
 import com.zepinos.realty.service.admin.UserService;
@@ -56,7 +57,7 @@ public class UserController {
 
     @PostMapping("")
     @ResponseBody
-    public Callable<Map<String, Object>> post(@Valid @ModelAttribute Users users,
+    public Callable<Map<String, Object>> post(@Valid @ModelAttribute UserGet userGet,
                                               BindingResult bindingResult,
                                               @RequestParam int groupSeq,
                                               @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
@@ -69,7 +70,12 @@ public class UserController {
             Map<String, Object> result = null;
             try {
 
-                result = userService.post(users, groupSeq, realtyUserDetails);
+                result = userService.post(userGet, groupSeq, realtyUserDetails);
+
+            } catch (RuntimeException e) {
+
+                e.printStackTrace();
+                result = Map.of("status", 1002, "message", e.getMessage());
 
             } catch (Exception e) {
 
