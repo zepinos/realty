@@ -1,8 +1,8 @@
 package com.zepinos.realty.service.admin;
 
 import com.zepinos.realty.dto.SearchDto;
-import com.zepinos.realty.dto.admin.GroupGet;
-import com.zepinos.realty.dto.admin.GroupList;
+import com.zepinos.realty.dto.group.GroupGet;
+import com.zepinos.realty.dto.group.GroupList;
 import com.zepinos.realty.jooq.tables.Authorities;
 import com.zepinos.realty.jooq.tables.GroupUsers;
 import com.zepinos.realty.jooq.tables.Groups;
@@ -67,9 +67,6 @@ public class GroupService {
         Record1<Integer> currentUsers = dsl
                 .select(countDistinct(USERS.USER_SEQ))
                 .from(USERS)
-                .join(AUTHORITIES)
-                .on(AUTHORITIES.USER_SEQ.eq(USERS.USER_SEQ))
-                .and(AUTHORITIES.AUTHORITY.in("ROLE_USER", "ROLE_GROUP"))
                 .join(GROUP_USERS)
                 .on(GROUP_USERS.USER_SEQ.eq(USERS.USER_SEQ))
                 .and(GROUP_USERS.GROUP_SEQ.eq(groupSeq))

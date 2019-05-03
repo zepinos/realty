@@ -1,7 +1,7 @@
 package com.zepinos.realty.controller.admin;
 
 import com.zepinos.realty.dto.SearchDto;
-import com.zepinos.realty.dto.admin.GroupGet;
+import com.zepinos.realty.dto.group.GroupGet;
 import com.zepinos.realty.service.admin.GroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

@@ -42,7 +42,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                            <input type="hidden" name="groupSeq" class="input-group-seq">
+                            <input type="hidden" name="groupSeq" th:value="${group.groupSeq}" class="input-group-seq">
                             <input type="text" name="username" placeholder="아이디"
                                    class="input-username form-control"/>
                         </div>
@@ -84,199 +84,26 @@
 
     <script type="text/javascript">
 
-
-        var container = document.getElementById('map');
-        var options = {
-            center: new daum.maps.LatLng(37.48683046398042, 126.8915661110265),
-            level: 3
-        };
-
-        var map = new daum.maps.Map(container, options);
-        // map.setZoomable(false); // 확대/축소 막기, 더블클릭을 통한 확대는 막을 수 없다
-
-        // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
-        var zoomControl = new daum.maps.ZoomControl();
-        map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
-
-        // 지도를 클릭한 위치에 표출할 마커
-        var marker = new daum.maps.Marker({
-            position: map.getCenter()
-        });
-
-        // 마커가 지도 위에 표시되도록 설정합니다
-        marker.setMap(map);
-
-        // 마커가 드래그 가능하도록 설정합니다
-        marker.setDraggable(true);
-
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new daum.maps.services.Geocoder();
-
-        // 검색 버튼 클릭
-        $('.search-address').on('click', function () {
-
-            // 주소 검색창
-            new daum.Postcode({
-
-                oncomplete: function (data) {
-
-                    var addr = data.address; // 최종 주소 변수
-
-                    // 주소로 좌표를 검색합니다
-                    geocoder.addressSearch(addr, function (result, status) {
-
-                        // 정상적으로 검색이 완료됐으면
-                        if (status === daum.maps.services.Status.OK) {
-
-                            var lat = result[0].y;
-                            var lng = result[0].x;
-
-                            var coords = new daum.maps.LatLng(lat, lng);
-
-                            container.style.display = "block";
-                            map.relayout();
-
-                            // 좌표 정보 입력
-                            $('.input-lat').val(lat);
-                            $('.input-lng').val(lng);
-
-                            // 주소 정보 입력
-                            var address = '';
-                            var extraAddr = '';
-
-                            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-                            if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-                                address = data.roadAddress;
-                            } else { // 사용자가 지번 주소를 선택했을 경우(J)
-                                address = data.jibunAddress;
-                            }
-
-                            // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                            if (data.userSelectedType === 'R') {
-                                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-                                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                                if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
-                                    extraAddr += data.bname;
-                                }
-                                // 건물명이 있고, 공동주택일 경우 추가한다.
-                                if (data.buildingName !== '' && data.apartment === 'Y') {
-                                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                                }
-                                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                                if (extraAddr !== '') {
-                                    extraAddr = ' (' + extraAddr + ')';
-                                }
-
-                            }
-
-                            $('.input-zonecode').val(data.zonecode);
-                            $('.input-address').val(address);
-                            $('.input-extra-address').val(extraAddr);
-                            $('.input-sido').val(data.sido);
-                            $('.input-sigungu').val(data.sigungu);
-                            $('.input-bname').val(data.bname);
-                            $('.input-hname').val(data.hname);
-
-                            // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                            map.setCenter(coords);
-
-                            // 결과값으로 받은 위치를 마커로 표시합니다
-                            marker.setPosition(coords);
-
-                            $('.input-detail-address').focus();
-
-                        } else {
-
-                            $('.input-lat').val('');
-                            $('.input-lng').val('');
-
-                            alert('주소 검색에 실패하였습니다.');
-
-                        }
-
-                    });
-
-                }
-            }).open();
-
-        });
-
-        // 마커에 드래그 종료 이벤트를 등록합니다
-        daum.maps.event.addListener(marker, 'dragend', function () {
-
-            // 드래그한 위도, 경도 정보를 가져옵니다
-            var latlng = marker.getPosition();
-
-            var lat = latlng.getLat();
-            var lng = latlng.getLng();
-
-            var message = '드래그한 위치의 위도는 ' + lat + ' 이고, ';
-            message += '경도는 ' + lng + ' 입니다';
-
-            console.info(message);
-
-            $('.input-lat').val(lat);
-            $('.input-lng').val(lng);
-
-        });
-
-        // 지도에 클릭 이벤트를 등록합니다
-        // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
-        daum.maps.event.addListener(map, 'click', function (mouseEvent) {
-
-            // 클릭한 위도, 경도 정보를 가져옵니다
-            var latlng = mouseEvent.latLng;
-
-            // 마커 위치를 클릭한 위치로 옮깁니다
-            marker.setPosition(latlng);
-
-            var lat = latlng.getLat();
-            var lng = latlng.getLng();
-
-            var message = '클릭한 위치의 위도는 ' + lat + ' 이고, ';
-            message += '경도는 ' + lng + ' 입니다';
-
-            console.info(message);
-
-            $('.input-lat').val(lat);
-            $('.input-lng').val(lng);
-
-        });
-
-        // 지도가 이동, 확대, 축소로 인해 중심좌표가 변경되면 마지막 파라미터로 넘어온 함수를 호출하도록 이벤트를 등록합니다
-        daum.maps.event.addListener(map, 'idle', function () {
-
-            // 지도 영역정보를 얻어옵니다
-            var bounds = map.getBounds();
-
-            // 영역정보의 남서쪽 정보를 얻어옵니다
-            var swLatlng = bounds.getSouthWest();
-
-            // 영역정보의 북동쪽 정보를 얻어옵니다
-            var neLatlng = bounds.getNorthEast();
-
-            var message = '<p>영역좌표는 남서쪽 위도, 경도는  ' + swLatlng.toString() + '이고 <br>';
-            message += '북동쪽 위도, 경도는  ' + neLatlng.toString() + '입니다 </p>';
-
-            console.info(message);
-
-        });
-
-        $('.form-realty').submit(function () {
+        $('.form-user').submit(function () {
 
             event.preventDefault();
 
+            if ($('.input-password').val() != $('.input-password-re').val()) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return false;
+            }
+
             $.ajax({
                 type: 'post',
-                url: '/realty',
+                url: '/admin/user',
                 data: $(this).serialize(),
                 success: function (data, status, xhr) {
 
                     var status = data.status;
                     if (status == 0)
-                        location.href = "/realty/" + data.realtySeq;
-                    else if (status == 1001) {
-                        alert(data.message);
+                        location.href = "/admin/group/" + data.groupSeq;
+                    else if (status >= 1001) {
+                        alert('[' + status + '] ' + data.message);
                     }
                 }
 
@@ -285,21 +112,6 @@
         });
 
     </script>
-
-    <script src="/vendor/summernote/summernote-bs4.js"></script>
-    <script src="/vendor/summernote/lang/summernote-ko-KR.js"></script>
-    <script type="text/javascript">
-
-        // editor 초기화
-        $('#realtyContent').summernote({
-            lang: 'ko-KR',
-            height: 200,
-            minHeight: 100,
-            placeholder: '상세 내용'
-        });
-
-    </script>
-
 
 </th:block>
 
