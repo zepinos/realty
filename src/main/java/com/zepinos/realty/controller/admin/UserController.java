@@ -3,7 +3,6 @@ package com.zepinos.realty.controller.admin;
 import com.zepinos.realty.dto.RealtyUserDetails;
 import com.zepinos.realty.dto.group.GroupGet;
 import com.zepinos.realty.dto.user.UserGet;
-import com.zepinos.realty.jooq.tables.pojos.Users;
 import com.zepinos.realty.service.admin.GroupService;
 import com.zepinos.realty.service.admin.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +83,32 @@ public class UserController {
             }
 
             return result;
+
+        };
+
+    }
+
+    @GetMapping("/{userSeq}")
+    public Callable<String> content(@PathVariable int userSeq,
+                                    ModelMap modelMap) {
+
+        return () -> {
+
+            try {
+
+                UserGet user = userService.getUser(userSeq);
+                GroupGet group = userService.getGroup(userSeq);
+
+                modelMap.put("user", user);
+                modelMap.put("group", group);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return "admin/user/content";
 
         };
 

@@ -33,7 +33,7 @@ public class GroupService {
         this.dsl = dsl;
     }
 
-    public GroupGet getGroup(int groupSeq) throws Exception {
+    public GroupGet getGroup(int groupSeq) {
 
         // group 테이블 조회
         GroupGet groupGet = dsl

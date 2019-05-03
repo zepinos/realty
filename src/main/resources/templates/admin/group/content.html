@@ -97,6 +97,7 @@
                 "url": "/admin/group/ajax/[[${content.groupSeq}]]",
                 "type": "get"
             },
+            "rowId": "userSeq",
             "columns": [
                 {"data": "userRealName"},
                 {"data": "username"},
@@ -110,7 +111,7 @@
 
         $(".button-delete").on('click', function () {
 
-            if (confirm("정말로 그룹을 사용중시 하겠습니까?")) {
+            if (confirm("정말로 그룹을 사용중지 하겠습니까?")) {
 
                 $.ajax({
                     type: 'delete',
@@ -123,6 +124,10 @@
 
             }
 
+        });
+
+        $('#dataTable tbody').on('click', 'tr', function () {
+            location.href = '/admin/user/' + $(this).prop('id');
         });
 
     </script>

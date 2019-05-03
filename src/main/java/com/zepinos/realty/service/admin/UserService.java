@@ -1,11 +1,13 @@
 package com.zepinos.realty.service.admin;
 
 import com.zepinos.realty.dto.RealtyUserDetails;
+import com.zepinos.realty.dto.group.GroupGet;
 import com.zepinos.realty.dto.user.UserGet;
 import com.zepinos.realty.jooq.tables.pojos.Groups;
 import com.zepinos.realty.jooq.tables.records.UsersRecord;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +19,17 @@ import static com.zepinos.realty.jooq.tables.GroupUsers.GROUP_USERS;
 import static com.zepinos.realty.jooq.tables.Groups.GROUPS;
 import static com.zepinos.realty.jooq.tables.Users.USERS;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.when;
 
 @Service
 public class UserService {
 
     private final DSLContext dsl;
+    private final GroupService groupService;
 
-    public UserService(DSLContext dsl) {
+    public UserService(DSLContext dsl, GroupService groupService) {
         this.dsl = dsl;
+        this.groupService = groupService;
     }
 
     @Transactional
@@ -97,6 +102,34 @@ public class UserService {
             throw new RuntimeException("[1002-003] 사용자 등록에 실패하였습니다.");
 
         return Map.of("status", 0, "count", cnt, "userSeq", userSeq, "groupSeq", groupSeq);
+
+    }
+
+    public UserGet getUser(int userSeq) {
+
+        UserGet userGet = dsl
+                .select(USERS.USER_SEQ,
+                        USERS.USERNAME,
+                        USERS.USER_REAL_NAME,
+                        when(USERS.ENABLED.eq("1"), "정상").
+                                otherwise("중지").as("enabled"))
+                .from(USERS)
+                .where(USERS.USER_SEQ.eq(userSeq))
+                .fetchOneInto(UserGet.class);
+
+        return userGet;
+
+    }
+
+    public GroupGet getGroup(int userSeq) {
+
+        Integer groupSeq = dsl
+                .select(GROUP_USERS.GROUP_SEQ)
+                .from(GROUP_USERS)
+                .where(GROUP_USERS.USER_SEQ.eq(userSeq))
+                .fetchOne(0, int.class);
+
+        return groupService.getGroup(groupSeq);
 
     }
 
