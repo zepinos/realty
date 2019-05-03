@@ -67,6 +67,11 @@
                 </div>
             </div>
 
+            <a th:href="@{/admin/user/new/group/{groupSeq}(groupSeq=${content.groupSeq})}"
+               class="btn btn-secondary btn-block">
+                그룹 사용자를 등록하겠습니다
+            </a>
+
         </div>
 
     </div>
@@ -89,7 +94,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "/admin/ajax/group/[[${content.groupSeq}]]",
+                "url": "/admin/group/ajax/[[${content.groupSeq}]]",
                 "type": "get"
             },
             "columns": [

@@ -1,8 +1,8 @@
-package com.zepinos.realty.controller;
+package com.zepinos.realty.controller.admin;
 
 import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.dto.admin.GroupGet;
-import com.zepinos.realty.service.AdminService;
+import com.zepinos.realty.service.admin.GroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,28 +15,28 @@ import java.util.concurrent.Callable;
 
 @Slf4j
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/admin/group")
+public class GroupController {
 
-    private final AdminService adminService;
+    private final GroupService groupService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public GroupController(GroupService groupService) {
+        this.groupService = groupService;
     }
 
-    @GetMapping("/group")
+    @GetMapping("")
     public String list(ModelMap modelMap) {
         return "admin/group/list";
     }
 
-    @GetMapping("/group/{groupSeq}")
+    @GetMapping("/{groupSeq}")
     public String get(ModelMap modelMap,
                       @PathVariable int groupSeq) {
 
         GroupGet content = null;
         try {
 
-            content = adminService.getGroup(groupSeq);
+            content = groupService.getGroup(groupSeq);
 
         } catch (Exception e) {
 
@@ -50,14 +50,14 @@ public class AdminController {
 
     }
 
-    @GetMapping("/group/{groupSeq}/edit")
+    @GetMapping("/{groupSeq}/edit")
     public String edit(ModelMap modelMap,
                        @PathVariable int groupSeq) {
 
         GroupGet content = null;
         try {
 
-            content = adminService.getGroup(groupSeq);
+            content = groupService.getGroup(groupSeq);
 
         } catch (Exception e) {
 
@@ -71,7 +71,7 @@ public class AdminController {
 
     }
 
-    @GetMapping("/ajax/group/{groupSeq}")
+    @GetMapping("/ajax/{groupSeq}")
     @ResponseBody
     public Callable<Map<String, Object>> ajaxGroupUsers(@ModelAttribute SearchDto searchDto,
                                                         @PathVariable int groupSeq) {
@@ -83,7 +83,7 @@ public class AdminController {
 
                 log.info("searchDto : {}", searchDto);
 
-                result = adminService.ajaxGroupUsers(searchDto, groupSeq);
+                result = groupService.ajaxGroupUsers(searchDto, groupSeq);
 
             } catch (Exception e) {
 
@@ -97,7 +97,7 @@ public class AdminController {
 
     }
 
-    @PostMapping("/ajax/group/list")
+    @PostMapping("/ajax/list")
     @ResponseBody
     public Callable<Map<String, Object>> ajaxGroupList(@ModelAttribute SearchDto searchDto) {
 
@@ -108,7 +108,7 @@ public class AdminController {
 
                 log.info("searchDto : {}", searchDto);
 
-                result = adminService.ajaxGroupList(searchDto);
+                result = groupService.ajaxGroupList(searchDto);
 
             } catch (Exception e) {
 
@@ -122,7 +122,7 @@ public class AdminController {
 
     }
 
-    @PutMapping("/group/{groupSeq}")
+    @PutMapping("/{groupSeq}")
     @ResponseBody
     public Callable<Map<String, Object>> put(@Valid @ModelAttribute GroupGet groupGet,
                                              BindingResult bindingResult) {
@@ -135,7 +135,7 @@ public class AdminController {
             Map<String, Object> result = null;
             try {
 
-                result = adminService.putGroup(groupGet);
+                result = groupService.putGroup(groupGet);
 
             } catch (Exception e) {
 

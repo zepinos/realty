@@ -1,4 +1,4 @@
-package com.zepinos.realty.service;
+package com.zepinos.realty.service.admin;
 
 import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.dto.admin.GroupGet;
@@ -25,11 +25,11 @@ import static com.zepinos.realty.jooq.tables.Users.USERS;
 import static org.jooq.impl.DSL.*;
 
 @Service
-public class AdminService {
+public class GroupService {
 
     private final DSLContext dsl;
 
-    public AdminService(DSLContext dsl) {
+    public GroupService(DSLContext dsl) {
         this.dsl = dsl;
     }
 

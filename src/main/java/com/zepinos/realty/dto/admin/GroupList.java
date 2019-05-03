@@ -2,10 +2,12 @@ package com.zepinos.realty.dto.admin;
 
 import com.zepinos.realty.jooq.tables.pojos.Groups;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.format.DateTimeFormatter;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GroupList extends Groups {
 
     private String groupAdmin;
