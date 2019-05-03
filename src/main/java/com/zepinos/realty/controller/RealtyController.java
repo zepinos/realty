@@ -1,9 +1,11 @@
 package com.zepinos.realty.controller;
 
+import com.zepinos.realty.dto.RealtyUserDetails;
 import com.zepinos.realty.dto.SearchDto;
 import com.zepinos.realty.jooq.tables.pojos.RealtyList;
 import com.zepinos.realty.service.RealtyService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -58,7 +60,8 @@ public class RealtyController {
     @PostMapping("")
     @ResponseBody
     public Callable<Map<String, Object>> post(@Valid @ModelAttribute RealtyList realtyList,
-                                              BindingResult bindingResult) {
+                                              BindingResult bindingResult,
+                                              @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
 
         return () -> {
 
@@ -68,7 +71,7 @@ public class RealtyController {
             Map<String, Object> result = null;
             try {
 
-                result = realtyService.post(realtyList);
+                result = realtyService.post(realtyList, realtyUserDetails.getUserSeq(), realtyUserDetails.getGroupSeq());
 
             } catch (Exception e) {
 
@@ -106,7 +109,8 @@ public class RealtyController {
     @PutMapping("/{realtySeq}")
     @ResponseBody
     public Callable<Map<String, Object>> put(@Valid @ModelAttribute RealtyList realtyList,
-                                              BindingResult bindingResult) {
+                                             BindingResult bindingResult,
+                                             @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
 
         return () -> {
 
@@ -116,7 +120,7 @@ public class RealtyController {
             Map<String, Object> result = null;
             try {
 
-                result = realtyService.put(realtyList);
+                result = realtyService.put(realtyList, realtyUserDetails.getUserSeq(), realtyUserDetails.getGroupSeq());
 
             } catch (Exception e) {
 
@@ -155,7 +159,8 @@ public class RealtyController {
 
     @PostMapping("/ajax/list")
     @ResponseBody
-    public Callable<Map<String, Object>> ajaxList(@ModelAttribute SearchDto searchDto) {
+    public Callable<Map<String, Object>> ajaxList(@ModelAttribute SearchDto searchDto,
+                                                  @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
 
         return () -> {
 
@@ -164,7 +169,7 @@ public class RealtyController {
 
                 log.info("searchDto : {}", searchDto);
 
-                result = realtyService.ajaxList(searchDto);
+                result = realtyService.ajaxList(searchDto, realtyUserDetails.getUserSeq(), realtyUserDetails.getGroupSeq());
 
             } catch (Exception e) {
 

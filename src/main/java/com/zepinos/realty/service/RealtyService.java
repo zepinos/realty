@@ -40,11 +40,15 @@ public class RealtyService {
 
     }
 
-    public Map<String, Object> post(RealtyList realtyList) throws Exception {
+    public Map<String, Object> post(RealtyList realtyList, int userSeq, int groupSeq) throws Exception {
 
         // realty_list 테이블 저장
         RealtyListRecord realtyListRecord = dsl.newRecord(REALTY_LIST, realtyList);
+        realtyListRecord.setUserSeq(userSeq);
+        realtyListRecord.setGroupSeq(groupSeq);
+        realtyListRecord.setUserAdd(userSeq);
         realtyListRecord.setDateAdd(LocalDateTime.now());
+        realtyListRecord.setUserMod(userSeq);
         realtyListRecord.setDateMod(LocalDateTime.now());
 
         int cnt = realtyListRecord.store();
@@ -53,10 +57,13 @@ public class RealtyService {
 
     }
 
-    public Map<String, Object> put(RealtyList realtyList) throws Exception {
+    public Map<String, Object> put(RealtyList realtyList, int userSeq, int groupSeq) throws Exception {
 
         // realty_list 테이블 저장
         RealtyListRecord realtyListRecord = dsl.newRecord(REALTY_LIST, realtyList);
+        realtyListRecord.setUserSeq(userSeq);
+        realtyListRecord.setGroupSeq(groupSeq);
+        realtyListRecord.setUserMod(userSeq);
         realtyListRecord.setDateMod(LocalDateTime.now());
 
         int cnt = dsl.
@@ -79,7 +86,7 @@ public class RealtyService {
 
     }
 
-    public Map<String, Object> ajaxList(SearchDto searchDto) throws Exception {
+    public Map<String, Object> ajaxList(SearchDto searchDto, int userSeq, int groupSeq) throws Exception {
 
         var search = searchDto.getSearch();
         var searchValue = search.get("value");
@@ -93,7 +100,9 @@ public class RealtyService {
                 REALTY_LIST.BNAME
         };
         Table<?> from = REALTY_LIST;
-        Condition where = REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE);
+        Condition where = REALTY_LIST.REALTY_STATUS.eq(RealtyListRealtyStatus.USE)
+                .and(REALTY_LIST.USER_SEQ.eq(userSeq))
+                .and(REALTY_LIST.GROUP_SEQ.eq(groupSeq));
 
         Long recordsTotal = dsl
                 .select(selectCount)

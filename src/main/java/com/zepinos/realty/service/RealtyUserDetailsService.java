@@ -1,23 +1,24 @@
 package com.zepinos.realty.service;
 
+import com.zepinos.realty.dto.RealtyUserDetails;
 import com.zepinos.realty.jooq.tables.pojos.Authorities;
+import com.zepinos.realty.jooq.tables.pojos.Groups;
 import com.zepinos.realty.jooq.tables.pojos.Users;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
-import org.jooq.tools.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.zepinos.realty.jooq.tables.Authorities.AUTHORITIES;
+import static com.zepinos.realty.jooq.tables.GroupUsers.GROUP_USERS;
+import static com.zepinos.realty.jooq.tables.Groups.GROUPS;
 import static com.zepinos.realty.jooq.tables.Users.USERS;
 
 @Service
@@ -35,7 +36,21 @@ public class RealtyUserDetailsService implements UserDetailsService {
                 .and(USERS.ENABLED.eq("1"))
                 .fetchOneInto(Users.class);
 
-        if (users == null || users.getUserSeq() == null) throw new UsernameNotFoundException(username);
+        if (users == null || users.getUserSeq() == null)
+            throw new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다.");
+
+        Groups groups = dsl
+                .select(GROUPS.asterisk())
+                .from(GROUPS)
+                .join(GROUP_USERS)
+                .on(GROUPS.GROUP_SEQ.eq(GROUP_USERS.GROUP_SEQ))
+                .where(GROUP_USERS.USER_SEQ.eq(users.getUserSeq()))
+                .fetchOneInto(Groups.class);
+
+        if (groups == null || groups.getGroupSeq() < 1)
+            throw new AuthenticationCredentialsNotFoundException("그룹 정보를 찾을 수 없습니다.");
+        else if (LocalDateTime.now().isAfter(groups.getExpireDatetime()))
+            throw new AccountExpiredException("그룹 사용기간이 만료되었습니다. 기간연장신청을 진행해주세요.");
 
         List<Authorities> authoritiesList = dsl
                 .select(AUTHORITIES.AUTHORITY)
@@ -43,69 +58,8 @@ public class RealtyUserDetailsService implements UserDetailsService {
                 .where(AUTHORITIES.USER_SEQ.eq(users.getUserSeq()))
                 .fetchInto(Authorities.class);
 
-        return new RealtyUserDetails(users, authoritiesList);
+        return new RealtyUserDetails(users, groups, authoritiesList);
 
-    }
-
-}
-
-@Slf4j
-class RealtyUserDetails implements UserDetails {
-
-    private Users users;
-    private List<Authorities> authoritiesList;
-
-//    public RealtyUserDetails(Users users) {
-//        this.users = users;
-//    }
-
-    public RealtyUserDetails(Users users, List<Authorities> authoritiesList) {
-        this.users = users;
-        this.authoritiesList = authoritiesList;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        List<GrantedAuthority> auth = new ArrayList<>();
-        authoritiesList.forEach(authorities -> auth.add(new SimpleGrantedAuthority(authorities.getAuthority())));
-
-        return auth;
-
-    }
-
-    @Override
-    public String getUsername() {
-        return users.getUsername();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return StringUtils.equals(users.getEnabled(), "1") ? true : false;
-    }
-
-    @Override
-    public String getPassword() {
-        return users.getPassword();
-    }
-
-    public String getUserRealName() {
-        return users.getUserRealName();
     }
 
 }
