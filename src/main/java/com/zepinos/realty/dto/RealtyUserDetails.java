@@ -82,12 +82,12 @@ public class RealtyUserDetails implements UserDetails {
         return users.getUserSeq();
     }
 
-    public int getGroupSeq() {
-        return groups.getGroupSeq();
+    public Integer getGroupSeq() {
+        return groups == null ? null : groups.getGroupSeq();
     }
 
     public String getGroupName() {
-        return groups.getGroupName();
+        return groups == null ? null : groups.getGroupName();
     }
 
 }

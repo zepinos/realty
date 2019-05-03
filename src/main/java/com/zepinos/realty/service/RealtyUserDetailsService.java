@@ -5,6 +5,8 @@ import com.zepinos.realty.jooq.tables.pojos.Authorities;
 import com.zepinos.realty.jooq.tables.pojos.Groups;
 import com.zepinos.realty.jooq.tables.pojos.Users;
 import org.jooq.DSLContext;
+import org.jooq.Record1;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -39,6 +41,15 @@ public class RealtyUserDetailsService implements UserDetailsService {
         if (users == null || users.getUserSeq() == null)
             throw new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다.");
 
+        int userSeq = users.getUserSeq();
+
+        int adminCnt = dsl
+                .selectCount()
+                .from(AUTHORITIES)
+                .where(AUTHORITIES.USER_SEQ.eq(userSeq))
+                .and(AUTHORITIES.AUTHORITY.eq("ROLE_ADMIN"))
+                .fetchOne(0, int.class);
+
         Groups groups = dsl
                 .select(GROUPS.asterisk())
                 .from(GROUPS)
@@ -47,10 +58,14 @@ public class RealtyUserDetailsService implements UserDetailsService {
                 .where(GROUP_USERS.USER_SEQ.eq(users.getUserSeq()))
                 .fetchOneInto(Groups.class);
 
-        if (groups == null || groups.getGroupSeq() < 1)
-            throw new AuthenticationCredentialsNotFoundException("그룹 정보를 찾을 수 없습니다.");
-        else if (LocalDateTime.now().isAfter(groups.getExpireDatetime()))
-            throw new AccountExpiredException("그룹 사용기간이 만료되었습니다. 기간연장신청을 진행해주세요.");
+        if (adminCnt < 1) {
+
+            if (groups == null || groups.getGroupSeq() < 1)
+                throw new AuthenticationCredentialsNotFoundException("그룹 정보를 찾을 수 없습니다.");
+            else if (LocalDateTime.now().isAfter(groups.getExpireDatetime()))
+                throw new AccountExpiredException("그룹 사용기간이 만료되었습니다. 기간연장신청을 진행해주세요.");
+
+        }
 
         List<Authorities> authoritiesList = dsl
                 .select(AUTHORITIES.AUTHORITY)
