@@ -7,7 +7,7 @@
 <div class="container-fluid" layout:fragment="content">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">사용자 등록</h1>
+    <h1 class="h3 mb-4 text-gray-800">사용자 수정</h1>
 
     <div class="row">
 
@@ -18,10 +18,6 @@
                     <h6 class="m-0 font-weight-bold text-primary">그룹 정보</h6>
                 </div>
                 <div class="card-body">
-                    <p>
-                        물건장을 이용할 사용자를 등록합니다.<br/>
-                        사용자는 그룹에 무조건 소속됩니다. 타 그룹으로 이동할 수 없습니다.<br/>
-                    </p>
                     <p th:text="${'그룹 이름 : ' + group.groupName}"/>
                     <p th:text="${'관리 계정 : ' + group.groupAdmin}"/>
                     <p th:text="${'만료 일시 : ' + group.expireDatetimeString}"/>
@@ -41,9 +37,13 @@
                         <h6 class="m-0 font-weight-bold text-primary">사용자 정보</h6>
                     </div>
                     <div class="card-body">
+                        <p>
+                            물건장을 이용할 사용자의 정보를 수정합니다.<br/>
+                            비밀번호는 수정하고자 할 경우에만 입력하여 주십시오.<br/>
+                        </p>
                         <div class="form-group">
-                            <input type="hidden" name="groupSeq" th:value="${group.groupSeq}" class="input-group-seq">
-                            <input type="text" name="username" placeholder="아이디"
+                            <input type="hidden" name="userSeq" th:value="${user.userSeq}"/>
+                            <input type="text" name="username" placeholder="아이디" th:value="${user.username}"
                                    class="input-username form-control"/>
                         </div>
                         <div class="row">
@@ -57,14 +57,14 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="text" name="userRealName" placeholder="사용자 이름"
+                            <input type="text" name="userRealName" placeholder="사용자 이름" th:value="${user.userRealName}"
                                    class="input-user-real_name form-control"/>
                         </div>
                     </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">
-                    사용자를 등록하겠습니다
+                    사용자 정보를 수정하겠습니다
                 </button>
 
             </form>
@@ -94,7 +94,7 @@
             }
 
             $.ajax({
-                type: 'post',
+                type: 'put',
                 url: '/admin/user',
                 data: $(this).serialize(),
                 success: function (data, status, xhr) {

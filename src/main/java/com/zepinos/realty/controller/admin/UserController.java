@@ -114,4 +114,63 @@ public class UserController {
 
     }
 
+    @GetMapping("/{userSeq}/edit")
+    public Callable<String> edit(@PathVariable int userSeq,
+                                 ModelMap modelMap) {
+
+        return () -> {
+
+            try {
+
+                GroupGet group = userService.getGroup(userSeq);
+                UserGet user = userService.getUser(userSeq);
+
+                modelMap.put("user", user);
+                modelMap.put("group", group);
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return "admin/user/edit";
+
+        };
+
+    }
+
+    @PutMapping("")
+    @ResponseBody
+    public Callable<Map<String, Object>> put(@Valid @ModelAttribute UserGet userGet,
+                                             BindingResult bindingResult,
+                                             @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
+
+        return () -> {
+
+            if (bindingResult.hasErrors())
+                return Map.of("status", 1001, "message", "매개변수 오류", "field_errors", bindingResult.getFieldErrors());
+
+            Map<String, Object> result = null;
+            try {
+
+                result = userService.put(userGet, realtyUserDetails);
+
+            } catch (RuntimeException e) {
+
+                e.printStackTrace();
+                result = Map.of("status", 1002, "message", e.getMessage());
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
 }
