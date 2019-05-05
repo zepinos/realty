@@ -173,4 +173,33 @@ public class UserController {
 
     }
 
+    @DeleteMapping("/{userSeq}")
+    @ResponseBody
+    public Callable<Map<String, Object>> put(@PathVariable int userSeq,
+                                             @AuthenticationPrincipal RealtyUserDetails realtyUserDetails) {
+
+        return () -> {
+
+            Map<String, Object> result = null;
+            try {
+
+                result = userService.delete(userSeq, realtyUserDetails);
+
+            } catch (RuntimeException e) {
+
+                e.printStackTrace();
+                result = Map.of("status", 1002, "message", e.getMessage());
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+            return result;
+
+        };
+
+    }
+
 }

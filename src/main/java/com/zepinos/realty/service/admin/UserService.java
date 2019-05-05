@@ -9,7 +9,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.tools.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -181,7 +180,9 @@ public class UserService {
         UpdateSetMoreStep<UsersRecord> userUpdate = dsl
                 .update(USERS)
                 .set(USERS.USERNAME, userGet.getUsername())
-                .set(USERS.USER_REAL_NAME, userGet.getUserRealName());
+                .set(USERS.USER_REAL_NAME, userGet.getUserRealName())
+                .set(USERS.USER_MOD, realtyUserDetails.getUserSeq())
+                .set(USERS.DATE_MOD, LocalDateTime.now());
 
         if (!StringUtils.isEmpty(userGet.getPassword()))
             userUpdate.set(USERS.PASSWORD, userGet.getPassword());
@@ -192,6 +193,26 @@ public class UserService {
 
         if (cnt < 1)
             throw new RuntimeException("[1002-004] 사용자 수정에 실패하였습니다.");
+
+        return Map.of("status", 0, "count", cnt, "userSeq", userSeq, "groupSeq", groupSeq);
+
+    }
+
+    @Transactional
+    public Map<String, Object> delete(int userSeq, RealtyUserDetails realtyUserDetails) throws Exception {
+
+        int cnt = dsl
+                .update(USERS)
+                .set(USERS.ENABLED, "0")
+                .set(USERS.USER_MOD, realtyUserDetails.getUserSeq())
+                .set(USERS.DATE_MOD, LocalDateTime.now())
+                .where(USERS.USER_SEQ.eq(userSeq))
+                .execute();
+
+        if (cnt < 1)
+            throw new RuntimeException("[1002-005] 사용자 비활성화에 실패하였습니다.");
+
+        int groupSeq = getGroup(userSeq).getGroupSeq();
 
         return Map.of("status", 0, "count", cnt, "userSeq", userSeq, "groupSeq", groupSeq);
 
